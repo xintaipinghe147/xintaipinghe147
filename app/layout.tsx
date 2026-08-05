@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Nav from "@/components/Nav";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
+import AppShell from "@/components/AppShell";
 
 export const metadata: Metadata = {
   title: "我的旅行手账",
@@ -19,19 +20,21 @@ export default function RootLayout({
             __html: `try{var t=localStorage.getItem('journal-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}`,
           }}
         />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;1,8..60,400;1,8..60,500&family=Noto+Serif+SC:wght@400;500;600&display=swap"
+          rel="stylesheet"
+        />
       </head>
       <body className="min-h-screen text-ink antialiased">
-        <Nav />
-        <main className="mx-auto w-full max-w-4xl px-4 pb-20 pt-6">
+        <AppShell nav={<Nav />} themeSwitcher={<ThemeSwitcher />}>
           {children}
-        </main>
-        <ThemeSwitcher />
-        <footer className="pb-8 text-center text-sm text-ink-soft/70">
-          <p>把走过的路，写成一册手账</p>
-          <p className="mt-1 text-xs text-ink-soft/50">
-            版本 {process.env.NEXT_PUBLIC_APP_VERSION}
-          </p>
-        </footer>
+        </AppShell>
       </body>
     </html>
   );

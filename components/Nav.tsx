@@ -23,13 +23,10 @@ export default async function Nav() {
 
         <nav className="flex items-center gap-4 sm:gap-5">
           <Link href="/" className="nav-link hidden sm:inline">
-            足迹地图
-          </Link>
-          <Link href="/#latest" className="nav-link hidden sm:inline">
-            最新日记
+            首页
           </Link>
           <Link href="/timeline" className="nav-link hidden sm:inline">
-            时间线
+            最新日记
           </Link>
           {user ? (
             <>

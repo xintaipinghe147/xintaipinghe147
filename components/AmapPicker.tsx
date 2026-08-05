@@ -23,6 +23,7 @@ export default function AmapPicker({ onPick, height = 300, center = null }: Prop
   const mapRef = useRef<any>(null);
   const markerRef = useRef<any>(null);
   const districtPolysRef = useRef<any[]>([]);
+  const districtCacheRef = useRef(new Map<string, any>());
   const onPickRef = useRef(onPick);
   const [keyword, setKeyword] = useState("");
   const [searching, setSearching] = useState(false);
@@ -154,11 +155,22 @@ export default function AmapPicker({ onPick, height = 300, center = null }: Prop
   }
 
   async function searchDistrict(kw: string): Promise<any | null> {
-    for (const level of ["district", "city", "province"]) {
-      const hit = await searchDistrictOnce(level, kw);
-      if (hit) return hit;
+    // 命中缓存直接返回，重复搜索不再发请求
+    if (districtCacheRef.current.has(kw)) {
+      return districtCacheRef.current.get(kw) ?? null;
     }
-    return null;
+    // 三个级别并行查询，哪个先命中就用哪个（优先级：区 > 市 > 省）
+    const results = await Promise.allSettled([
+      searchDistrictOnce("district", kw),
+      searchDistrictOnce("city", kw),
+      searchDistrictOnce("province", kw),
+    ]);
+    const hit =
+      results
+        .map((r) => (r.status === "fulfilled" ? r.value : null))
+        .find(Boolean) ?? null;
+    if (hit) districtCacheRef.current.set(kw, hit);
+    return hit;
   }
 
   function showDistrict(hit: any) {

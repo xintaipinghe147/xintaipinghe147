@@ -1,4 +1,5 @@
 import Link from "next/link";
+import HomeMap from "@/components/HomeMap";
 import { getPublishedPosts } from "@/lib/data";
 import { formatDate, postDate } from "@/lib/utils";
 
@@ -15,9 +16,39 @@ export default async function TimelinePage() {
     groups.set(year, list);
   }
   const years = Array.from(groups.keys()).sort((a, b) => b - a);
+  const points = posts
+    .filter(
+      (p): p is typeof posts[number] & { lat: number; lng: number } =>
+        p.lat !== null && p.lng !== null
+    )
+    .map((p) => ({
+      id: p.id,
+      name: p.location_name,
+      title: p.title,
+      value: [p.lng, p.lat] as [number, number],
+      date: formatDate(postDate(p)),
+      cover: p.image_urls[0],
+      excerpt: p.content,
+    }));
 
   return (
     <div className="space-y-10">
+      <section id="map" className="space-y-4">
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
+            世界足迹
+          </h2>
+          <p className="text-sm text-ink-soft">
+            {points.length > 0
+              ? `已点亮 ${points.length} 个地方，点击标记查看日记`
+              : "足迹会随着日记慢慢点亮"}
+          </p>
+        </div>
+        <div className="overflow-hidden rounded-2xl border border-line bg-map-bg shadow-sm">
+          <HomeMap points={points} />
+        </div>
+      </section>
+
       <div className="note-card relative p-6 text-center">
         <div className="pin" aria-hidden />
         <h1 className="text-2xl font-bold">我的旅行时间线</h1>
