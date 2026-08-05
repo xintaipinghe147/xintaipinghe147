@@ -3,11 +3,11 @@
 import { useEffect, useState } from "react";
 
 const THEMES = [
-  { id: "paper", label: "纸张", color: "#f7f0de", color2: "#efe4cb" },
-  { id: "warm", label: "暖阳", color: "#fdf3d8", color2: "#f3e3b8" },
-  { id: "mist", label: "晨雾", color: "#eef3ee", color2: "#dce8df" },
-  { id: "sakura", label: "樱花", color: "#fdf0f0", color2: "#f3dcdc" },
-  { id: "night", label: "夜空", color: "#20242e", color2: "#2a303d" },
+  { id: "paper", label: "石墨", color: "#0b0c10", color2: "#15171d" },
+  { id: "warm", label: "暮蓝", color: "#0c1016", color2: "#131b29" },
+  { id: "mist", label: "墨绿", color: "#0b1210", color2: "#121d18" },
+  { id: "sakura", label: "暗紫", color: "#100e16", color2: "#181525" },
+  { id: "night", label: "夜空", color: "#050607", color2: "#0b0c10" },
 ] as const;
 
 export default function ThemeSwitcher() {

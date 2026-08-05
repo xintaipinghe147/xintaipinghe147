@@ -102,7 +102,7 @@ export default function MeForm({
             onChange={(e) => {
               if (e.target.files?.[0]) uploadAvatar(e.target.files[0]);
             }}
-            className="block max-w-[220px] text-xs text-ink-soft file:mr-2 file:rounded-full file:border-0 file:bg-accent file:px-3 file:py-1.5 file:text-xs file:text-white"
+            className="block max-w-[220px] text-xs text-ink-soft file:mr-2 file:rounded-full file:border-0 file:bg-accent file:px-3 file:py-1.5 file:text-xs file:text-accent-ink"
           />
           <p className="mt-1 text-xs text-ink-soft">上传一张头像（5MB 以内）</p>
         </div>

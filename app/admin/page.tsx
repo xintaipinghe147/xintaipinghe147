@@ -22,7 +22,7 @@ function RoleBadge({ role }: { role: string }) {
       ? "bg-accent/15 text-accent"
       : role === "member"
         ? "bg-paper-deep/80 text-ink"
-        : "bg-amber-100 text-amber-700";
+        : "bg-white/10 text-white/70";
   return (
     <span className={`rounded-full px-2.5 py-0.5 text-xs ${style}`}>
       {map[role] ?? role}

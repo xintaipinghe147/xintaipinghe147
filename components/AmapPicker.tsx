@@ -179,14 +179,14 @@ export default function AmapPicker({ onPick, height = 300, center = null }: Prop
     setSearchError("");
     if (Array.isArray(hit.boundaries) && hit.boundaries.length > 0) {
       hit.boundaries.forEach((b: any) => {
-        const poly = new window.AMap.Polygon({
-          path: b,
-          strokeColor: "#ff3b30",
-          strokeWeight: 2,
-          strokeOpacity: 0.85,
-          fillColor: "#ff3b30",
-          fillOpacity: 0.06,
-        });
+              const poly = new window.AMap.Polygon({
+                path: b,
+                strokeColor: "#ffffff",
+                strokeWeight: 2,
+                strokeOpacity: 0.9,
+                fillColor: "#ffffff",
+                fillOpacity: 0.04,
+              });
         poly.setMap(map);
         districtPolysRef.current.push(poly);
       });

@@ -33,7 +33,7 @@ type Props = {
 
 function buildOption(points: MapPoint[]) {
   return {
-    backgroundColor: "#eef2f6",
+    backgroundColor: "transparent",
     tooltip: {
       trigger: "item" as const,
       confine: true,
@@ -57,13 +57,13 @@ function buildOption(points: MapPoint[]) {
       zoom: 1.12,
       scaleLimit: { min: 1, max: 20 },
       itemStyle: {
-        areaColor: "#f7f9fb",
-        borderColor: "#c8d1da",
+        areaColor: "#1d2026",
+        borderColor: "rgba(255,255,255,0.16)",
         borderWidth: 1,
       },
       emphasis: {
         disabled: false,
-        itemStyle: { areaColor: "#dfe8f1" },
+        itemStyle: { areaColor: "#2a2e37" },
         label: {
           show: false,
           fontSize: 11,
@@ -85,11 +85,11 @@ function buildOption(points: MapPoint[]) {
         showEffectOn: "render",
         rippleEffect: { scale: 2.6, brushType: "stroke", period: 3.6 },
         itemStyle: {
-          color: "#ff3b30",
+          color: "#ffffff",
           borderColor: "#ffffff",
           borderWidth: 1.5,
           shadowBlur: 8,
-          shadowColor: "rgba(255,59,48,0.5)",
+          shadowColor: "rgba(255,255,255,0.55)",
         },
         label: {
           show: false,

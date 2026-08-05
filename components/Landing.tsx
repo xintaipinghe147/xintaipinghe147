@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import {
   ArrowRight,
   BookOpen,
@@ -50,22 +51,34 @@ function InstagramIcon({ className = "" }: { className?: string }) {
 }
 
 export default function Landing({ user }: { user: SessionUser | null }) {
+  const [videoFailed, setVideoFailed] = useState(false);
   const accountHref = user ? "/me" : "/login";
   const accountLabel = user ? user.username : "登录";
   const joinHref = user ? "/new" : "/signup";
 
   return (
     <div className="relative min-h-screen w-full overflow-hidden bg-black font-display text-white">
-      {/* 背景视频：铺满整个视口，位于最底层 */}
-      <video
+      {/* 兜底背景图：视频加载失败时仍显示完整画面 */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/hero-poster.jpg"
+        alt=""
         className="absolute inset-0 z-0 h-full w-full object-cover"
-        src={VIDEO_URL}
-        autoPlay
-        loop
-        muted
-        playsInline
-        preload="auto"
       />
+      {/* 背景视频：铺满整个视口，加载失败时自动移除，露出兜底图 */}
+      {videoFailed ? null : (
+        <video
+          className="absolute inset-0 z-[1] h-full w-full object-cover"
+          src={VIDEO_URL}
+          poster="/hero-poster.jpg"
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="auto"
+          onError={() => setVideoFailed(true)}
+        />
+      )}
       {/* 轻微压暗，保证文字清晰（不引入任何彩色） */}
       <div className="absolute inset-0 z-[5] bg-black/15" />
 

@@ -270,7 +270,7 @@ export default function PostForm({ userId, post }: Props) {
                 disabled={!active && tags.length >= 6}
                 className={`rounded-full px-3.5 py-1.5 text-sm transition-colors ${
                   active
-                    ? "bg-accent text-white"
+                    ? "bg-accent text-accent-ink"
                     : "border border-line-strong text-ink-soft hover:bg-paper-deep/60"
                 } disabled:opacity-40`}
               >
@@ -291,7 +291,7 @@ export default function PostForm({ userId, post }: Props) {
           accept="image/*"
           multiple
           onChange={(e) => uploadImages(e.target.files)}
-          className="block w-full text-sm text-ink-soft file:mr-3 file:rounded-full file:border-0 file:bg-accent file:px-4 file:py-2 file:text-sm file:text-white"
+          className="block w-full text-sm text-ink-soft file:mr-3 file:rounded-full file:border-0 file:bg-accent file:px-4 file:py-2 file:text-sm file:text-accent-ink"
         />
         <p className="mt-2 text-xs text-ink-soft">
           单张不超过 10MB，一次最多 9 张，会占用网站的免费存储空间，建议选最精彩的。
@@ -309,7 +309,7 @@ export default function PostForm({ userId, post }: Props) {
                 <button
                   type="button"
                   onClick={() => removeImage(img.url)}
-                  className="absolute -right-1.5 -top-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-accent text-xs text-white shadow"
+                  className="absolute -right-1.5 -top-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-accent text-xs text-accent-ink shadow"
                   aria-label="移除图片"
                 >
                   ×
