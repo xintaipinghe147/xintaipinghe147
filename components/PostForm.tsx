@@ -119,8 +119,8 @@ export default function PostForm({ userId, post }: Props) {
         }),
       });
       const data = await res.json();
-      if (!res.ok) {
-        setError(data.error ?? "发布失败，请稍后再试");
+      if (!res.ok || !data?.id) {
+        setError(data?.error ?? "发布失败，请稍后再试");
         return;
       }
       router.push(`/posts/${data.id}`);

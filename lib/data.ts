@@ -52,11 +52,24 @@ export async function getPublishedPosts(limit = 100): Promise<Post[]> {
     .order("created_at", { ascending: false })
     .limit(limit);
 
-  if (error) {
-    console.error("getPublishedPosts", error.message);
+  if (!error && data) {
+    return (data ?? []).map((row) => normalizePost(row as PostRow));
+  }
+
+  // 兜底：关联查询失败时（例如外键/视图缺失），只查主表，保证日记仍能展示
+  const { data: plain, error: plainError } = await supabase
+    .from("posts")
+    .select("*")
+    .eq("status", "published")
+    .order("created_at", { ascending: false })
+    .limit(limit);
+  if (plainError) {
+    console.error("getPublishedPosts", plainError.message);
     return [];
   }
-  return (data ?? []).map((row) => normalizePost(row as PostRow));
+  return (plain ?? []).map((row) =>
+    normalizePost({ ...(row as PostRow), profiles: null, likes: [], comments: [] })
+  );
 }
 
 export async function getPost(id: string): Promise<Post | null> {
@@ -67,8 +80,23 @@ export async function getPost(id: string): Promise<Post | null> {
     .eq("id", id)
     .maybeSingle();
 
-  if (error || !data) return null;
-  return normalizePost(data as PostRow);
+  if (!error && data) {
+    return normalizePost(data as PostRow);
+  }
+
+  // 兜底：关联查询失败时，只查主表，保证已发布的日记能正常打开
+  const { data: plain, error: plainError } = await supabase
+    .from("posts")
+    .select("*")
+    .eq("id", id)
+    .maybeSingle();
+  if (plainError || !plain) return null;
+  return normalizePost({
+    ...(plain as PostRow),
+    profiles: null,
+    likes: [],
+    comments: [],
+  });
 }
 
 export async function getPostsByAuthor(
@@ -85,11 +113,26 @@ export async function getPostsByAuthor(
   if (!includePending) query = query.eq("status", "published");
 
   const { data, error } = await query;
-  if (error) {
-    console.error("getPostsByAuthor", error.message);
+  if (!error && data) {
+    return (data ?? []).map((row) => normalizePost(row as PostRow));
+  }
+
+  const plainQuery = supabase
+    .from("posts")
+    .select("*")
+    .eq("author_id", authorId)
+    .order("created_at", { ascending: false })
+    .limit(100);
+  if (!includePending) plainQuery.eq("status", "published");
+
+  const { data: plain, error: plainError } = await plainQuery;
+  if (plainError) {
+    console.error("getPostsByAuthor", plainError.message);
     return [];
   }
-  return (data ?? []).map((row) => normalizePost(row as PostRow));
+  return (plain ?? []).map((row) =>
+    normalizePost({ ...(row as PostRow), profiles: null, likes: [], comments: [] })
+  );
 }
 
 type CommentRow = {
@@ -121,11 +164,23 @@ export async function getComments(postId: string): Promise<Comment[]> {
     .order("created_at", { ascending: true })
     .limit(200);
 
-  if (error) {
-    console.error("getComments", error.message);
+  if (!error && data) {
+    return (data ?? []).map((row) => normalizeComment(row as CommentRow));
+  }
+
+  const { data: plain, error: plainError } = await supabase
+    .from("comments")
+    .select("*")
+    .eq("post_id", postId)
+    .order("created_at", { ascending: true })
+    .limit(200);
+  if (plainError) {
+    console.error("getComments", plainError.message);
     return [];
   }
-  return (data ?? []).map((row) => normalizeComment(row as CommentRow));
+  return (plain ?? []).map((row) =>
+    normalizeComment({ ...(row as CommentRow), profiles: null })
+  );
 }
 
 export async function getRecentComments(limit = 100): Promise<Comment[]> {
