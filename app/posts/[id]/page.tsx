@@ -4,6 +4,7 @@ import LikeButton from "@/components/LikeButton";
 import CommentSection from "@/components/CommentSection";
 import VideoEmbed from "@/components/VideoEmbed";
 import DeletePostButton from "@/components/DeletePostButton";
+import ImageGallery from "@/components/ImageGallery";
 import { getComments, getPost, isPostLiked } from "@/lib/data";
 import { getSessionUser } from "@/lib/auth";
 import { formatDate } from "@/lib/utils";
@@ -51,25 +52,18 @@ export default async function PostPage({
       </div>
 
       {post.image_urls.length > 0 ? (
-        <div className="grid gap-3 sm:grid-cols-2">
-          {post.image_urls.map((url, i) => (
-            <a
-              key={url}
-              href={url}
-              target="_blank"
-              rel="noreferrer"
-              className={`note-card block overflow-hidden p-1.5 transition-transform hover:-translate-y-0.5 ${
-                i === 0 && post.image_urls.length === 1 ? "sm:col-span-2" : ""
-              }`}
+        <ImageGallery images={post.image_urls} title={post.title} />
+      ) : null}
+
+      {post.tags.length > 0 ? (
+        <div className="flex flex-wrap gap-2">
+          {post.tags.map((tag) => (
+            <span
+              key={tag}
+              className="rounded-full bg-paper-deep/70 px-3 py-1 text-sm text-ink-soft"
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={url}
-                alt={`${post.title} 图片 ${i + 1}`}
-                className="w-full rounded-md object-contain"
-                loading="lazy"
-              />
-            </a>
+              # {tag}
+            </span>
           ))}
         </div>
       ) : null}

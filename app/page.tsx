@@ -1,21 +1,25 @@
 import Link from "next/link";
-import WorldMap, { type MapPoint } from "@/components/WorldMap";
+import HomeMap from "@/components/HomeMap";
 import PostBrowser from "@/components/PostBrowser";
 import { getPublishedPosts } from "@/lib/data";
 import { getSessionUser } from "@/lib/auth";
+import { formatDate } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
   const [posts, user] = await Promise.all([getPublishedPosts(50), getSessionUser()]);
 
-  const points: MapPoint[] = posts
+  const points = posts
     .filter((p) => Number.isFinite(p.lat) && Number.isFinite(p.lng))
     .map((p) => ({
       id: p.id,
       name: p.location_name,
       title: p.title,
       value: [p.lng, p.lat] as [number, number],
+      date: formatDate(p.created_at),
+      cover: p.image_urls[0],
+      excerpt: p.content,
     }));
 
   const canPost = user?.role === "admin" || user?.role === "member";
@@ -56,7 +60,7 @@ export default async function HomePage() {
           共 {points.length} 个足迹{points.length > 0 ? "，点击标记查看游记" : ""}
         </p>
         <div className="overflow-hidden rounded-lg border border-[rgba(150,128,92,0.35)] bg-[#fdfaf0]">
-          <WorldMap points={points} />
+          <HomeMap points={points} />
         </div>
       </section>
 

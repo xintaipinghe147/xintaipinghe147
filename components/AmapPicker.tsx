@@ -24,6 +24,7 @@ export default function AmapPicker({ onPick, height = 300, center = null }: Prop
   const [keyword, setKeyword] = useState("");
   const [searching, setSearching] = useState(false);
   const [pickedName, setPickedName] = useState("");
+  const [candidates, setCandidates] = useState<any[]>([]);
   onPickRef.current = onPick;
 
   useEffect(() => {
@@ -66,7 +67,7 @@ export default function AmapPicker({ onPick, height = 300, center = null }: Prop
       initMap();
     } else {
       const script = document.createElement("script");
-      script.src = `https://webapi.amap.com/maps?v=2.0&key=${key}&plugin=AMap.PlaceSearch`;
+      script.src = `https://webapi.amap.com/maps?v=2.0&key=${key}&plugin=AMap.PlaceSearch,AMap.Geocoder`;
       script.async = true;
       script.onload = () => initMap();
       script.onerror = () => console.error("高德地图脚本加载失败");
@@ -85,27 +86,51 @@ export default function AmapPicker({ onPick, height = 300, center = null }: Prop
     if (!kw || !mapRef.current || !window.AMap) return;
     setSearching(true);
     try {
+      setCandidates([]);
       const placeSearch = new window.AMap.PlaceSearch({
-        pageSize: 1,
+        pageSize: 5,
         pageIndex: 1,
       });
       placeSearch.search(kw, (status: string, result: any) => {
-        const poi = result?.poiList?.pois?.[0];
-        if (status === "complete" && poi) {
-          mapRef.current.setZoomAndCenter(16, poi.location);
-          const marker = new window.AMap.Marker({ position: poi.location });
-          if (markerRef.current) markerRef.current.setMap(null);
-          markerRef.current = marker;
-          markerRef.current.setMap(mapRef.current);
-          onPickRef.current(poi.location.lng, poi.location.lat, poi.name);
-          setPickedName(poi.name);
+        const pois = result?.poiList?.pois ?? [];
+        if (status === "complete" && pois.length > 0) {
+          setCandidates(pois.slice(0, 5));
+          selectPlace(pois[0]);
         } else {
-          setPickedName("没有找到这个地点");
+          // POI 搜不到时，用地理编码试试（比如搜"山西"这类行政区名）
+          const geocoder = new window.AMap.Geocoder({});
+          geocoder.getLocation(kw, (geoStatus: string, geoResult: any) => {
+            const gc = geoResult?.geocodes?.[0];
+            if (geoStatus === "complete" && gc?.location) {
+              selectPlace({
+                name: gc.formattedAddress ?? kw,
+                location: gc.location,
+                adname: gc.adname ?? "",
+              });
+            } else {
+              setPickedName("没有找到这个地点，试试更具体的名字");
+            }
+          });
         }
       });
     } finally {
       setSearching(false);
     }
+  }
+
+  function selectPlace(place: any) {
+    if (!mapRef.current || !window.AMap || !place?.location) return;
+    const lng = place.location.lng ?? place.location.getLng?.();
+    const lat = place.location.lat ?? place.location.getLat?.();
+    if (typeof lng !== "number" || typeof lat !== "number") return;
+    const name = place.name ?? place.formattedAddress ?? keyword.trim();
+    mapRef.current.setZoomAndCenter(13, place.location);
+    const marker = new window.AMap.Marker({ position: place.location });
+    if (markerRef.current) markerRef.current.setMap(null);
+    markerRef.current = marker;
+    markerRef.current.setMap(mapRef.current);
+    onPickRef.current(lng, lat, name);
+    setPickedName(name);
   }
 
   if (!key) {
@@ -151,6 +176,24 @@ export default function AmapPicker({ onPick, height = 300, center = null }: Prop
         style={{ height }}
         className="w-full cursor-crosshair overflow-hidden rounded-lg border border-[rgba(150,128,92,0.35)]"
       />
+      {candidates.length > 0 ? (
+        <div className="mt-2 space-y-1">
+          <p className="text-xs text-ink-soft">选一个更精确的结果：</p>
+          {candidates.map((c) => (
+            <button
+              key={c.id ?? c.name}
+              type="button"
+              onClick={() => selectPlace(c)}
+              className="block w-full truncate rounded-lg border border-[rgba(150,128,92,0.3)] bg-white/60 px-3 py-1.5 text-left text-sm hover:border-accent hover:bg-accent-soft/20"
+            >
+              {c.name}
+              {c.adname ? (
+                <span className="ml-2 text-xs text-ink-soft">{c.adname}</span>
+              ) : null}
+            </button>
+          ))}
+        </div>
+      ) : null}
       {pickedName ? (
         <p className="mt-2 text-sm text-accent">已选：{pickedName}</p>
       ) : (

@@ -19,26 +19,34 @@ export type MapPoint = {
   name: string;
   title: string;
   value: [number, number];
+  date?: string;
+  cover?: string;
+  excerpt?: string;
 };
 
 type Props = {
   points: MapPoint[];
   onPick?: (lng: number, lat: number) => void;
+  onSelect?: (point: MapPoint | null) => void;
   height?: number;
 };
 
 function buildOption(points: MapPoint[]) {
   return {
-    backgroundColor: "transparent",
+    backgroundColor: "#dbe7ef",
     tooltip: {
       trigger: "item" as const,
       confine: true,
-      backgroundColor: "rgba(76,65,53,0.92)",
+      backgroundColor: "rgba(76,65,53,0.95)",
       borderWidth: 0,
+      extraCssText: "border-radius:10px;box-shadow:0 4px 16px rgba(0,0,0,.25);",
       textStyle: { color: "#fff", fontSize: 13, fontFamily: "KaiTi, serif" },
       formatter: (params: any) => {
         if (params.seriesType === "effectScatter") {
-          return `<b>${params.name}</b><br/>${params.data?.title ?? ""}`;
+          const d = params.data ?? {};
+          return `<b>${params.name}</b><br/>${d.title ?? ""}${
+            d.date ? `<br/><span style="opacity:.75">${d.date}</span>` : ""
+          }`;
         }
         return params.name;
       },
@@ -46,25 +54,39 @@ function buildOption(points: MapPoint[]) {
     geo: {
       map: "world",
       roam: true,
-      zoom: 1.15,
+      zoom: 1.12,
       scaleLimit: { min: 1, max: 20 },
       itemStyle: {
         areaColor: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-          { offset: 0, color: "#f0e4c9" },
-          { offset: 1, color: "#dfcda3" },
+          { offset: 0, color: "#f3e7cc" },
+          { offset: 1, color: "#dcc79b" },
         ]),
-        borderColor: "#a99678",
-        borderWidth: 0.8,
-        shadowColor: "rgba(90,70,40,0.28)",
-        shadowBlur: 10,
-        shadowOffsetY: 5,
+        borderColor: "#9c8868",
+        borderWidth: 1,
+        shadowColor: "rgba(80,60,35,0.35)",
+        shadowBlur: 14,
+        shadowOffsetY: 6,
       },
       emphasis: {
         disabled: false,
-        itemStyle: { areaColor: "#d8bf8f" },
-        label: { show: false },
+        itemStyle: { areaColor: "#d3b678" },
+        label: {
+          show: true,
+          color: "#6b5b47",
+          fontSize: 11,
+          fontWeight: "bold" as const,
+          fontFamily: "KaiTi, serif",
+          textShadowColor: "rgba(255,255,255,0.9)",
+          textShadowBlur: 4,
+        },
       },
       select: { disabled: true },
+      regions: [
+        {
+          name: "Antarctica",
+          itemStyle: { areaColor: "#e9eef2" },
+        },
+      ],
     },
     series: [
       {
@@ -76,22 +98,22 @@ function buildOption(points: MapPoint[]) {
           id: p.id,
           title: p.title,
         })),
-        symbolSize: 11,
+        symbolSize: 12,
         showEffectOn: "render",
-        rippleEffect: { scale: 3.6, brushType: "stroke", period: 3.2 },
+        rippleEffect: { scale: 4, brushType: "stroke", period: 3 },
         itemStyle: {
-          color: "#c0452f",
+          color: "#b3402a",
           borderColor: "#fff7e6",
-          borderWidth: 1.2,
-          shadowBlur: 10,
-          shadowColor: "rgba(192,69,47,0.55)",
+          borderWidth: 1.5,
+          shadowBlur: 12,
+          shadowColor: "rgba(179,64,42,0.6)",
         },
         label: {
           show: true,
           position: "right",
           formatter: "{b}",
           fontSize: 11,
-          color: "#5f513f",
+          color: "#4c3d2f",
           fontWeight: "bold" as const,
           fontFamily: "KaiTi, serif",
           textShadowColor: "rgba(255,255,255,0.8)",
@@ -103,14 +125,21 @@ function buildOption(points: MapPoint[]) {
   };
 }
 
-export default function WorldMap({ points, onPick, height = 430 }: Props) {
+export default function WorldMap({
+  points,
+  onPick,
+  onSelect,
+  height = 430,
+}: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<echarts.ECharts | null>(null);
   const router = useRouter();
   const pointsRef = useRef(points);
   const onPickRef = useRef(onPick);
+  const onSelectRef = useRef(onSelect);
   pointsRef.current = points;
   onPickRef.current = onPick;
+  onSelectRef.current = onSelect;
 
   useEffect(() => {
     const el = containerRef.current;
@@ -130,7 +159,14 @@ export default function WorldMap({ points, onPick, height = 430 }: Props) {
 
         chart.on("click", (params: any) => {
           if (params.seriesType === "effectScatter" && params.data?.id) {
-            router.push(`/posts/${params.data.id}`);
+            const point = pointsRef.current.find(
+              (p) => p.id === params.data.id
+            );
+            if (onSelectRef.current && point) {
+              onSelectRef.current(point);
+            } else {
+              router.push(`/posts/${params.data.id}`);
+            }
           } else if (
             params.componentType === "geo" &&
             onPickRef.current

@@ -6,16 +6,26 @@ import type { Post } from "@/lib/types";
 
 export default function PostBrowser({ posts }: { posts: Post[] }) {
   const [query, setQuery] = useState("");
+  const [activeTag, setActiveTag] = useState<string | null>(null);
+
+  const allTags = useMemo(() => {
+    const set = new Set<string>();
+    posts.forEach((p) => p.tags?.forEach((t) => set.add(t)));
+    return Array.from(set);
+  }, [posts]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return posts;
-    return posts.filter((p) =>
-      `${p.title} ${p.location_name} ${p.content} ${p.author_username}`
-        .toLowerCase()
-        .includes(q)
-    );
-  }, [posts, query]);
+    return posts.filter((p) => {
+      const matchQ =
+        !q ||
+        `${p.title} ${p.location_name} ${p.content} ${p.author_username}`
+          .toLowerCase()
+          .includes(q);
+      const matchTag = !activeTag || (p.tags ?? []).includes(activeTag);
+      return matchQ && matchTag;
+    });
+  }, [posts, query, activeTag]);
 
   return (
     <div className="space-y-5">
@@ -26,6 +36,35 @@ export default function PostBrowser({ posts }: { posts: Post[] }) {
         placeholder="🔍 搜索标题、地点、作者…"
         maxLength={40}
       />
+      {allTags.length > 0 ? (
+        <div className="flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={() => setActiveTag(null)}
+            className={`rounded-full px-3.5 py-1 text-sm ${
+              activeTag === null
+                ? "bg-accent text-white"
+                : "border border-[rgba(150,128,92,0.5)] text-ink-soft"
+            }`}
+          >
+            全部
+          </button>
+          {allTags.map((tag) => (
+            <button
+              key={tag}
+              type="button"
+              onClick={() => setActiveTag(activeTag === tag ? null : tag)}
+              className={`rounded-full px-3.5 py-1 text-sm ${
+                activeTag === tag
+                  ? "bg-accent text-white"
+                  : "border border-[rgba(150,128,92,0.5)] text-ink-soft"
+              }`}
+            >
+              {tag}
+            </button>
+          ))}
+        </div>
+      ) : null}
       {filtered.length === 0 ? (
         <div className="note-card px-6 py-12 text-center text-ink-soft">
           {query.trim()

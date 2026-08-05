@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { getSessionUser } from "@/lib/auth";
+import { POST_TAGS } from "@/lib/constants";
 
 export async function DELETE(
   _request: Request,
@@ -74,6 +75,16 @@ export async function PATCH(
         .slice(0, 9)
         .map((u: string) => u.slice(0, 500))
     : [];
+  const tags = Array.isArray(body.tags)
+    ? body.tags
+        .filter(
+          (t: unknown) =>
+            typeof t === "string" &&
+            (POST_TAGS as readonly string[]).includes(t.trim())
+        )
+        .slice(0, 6)
+        .map((t: string) => t.trim())
+    : [];
 
   if (!title || !location_name || !content) {
     return NextResponse.json({ error: "标题、地点和正文不能为空" }, { status: 400 });
@@ -92,6 +103,7 @@ export async function PATCH(
       content,
       image_urls,
       video_url,
+      tags,
       updated_at: new Date().toISOString(),
     })
     .eq("id", id)

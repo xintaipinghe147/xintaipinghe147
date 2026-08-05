@@ -5,6 +5,7 @@ import { useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import AmapPicker from "@/components/AmapPicker";
 import type { Post } from "@/lib/types";
+import { POST_TAGS } from "@/lib/constants";
 
 type Props = {
   userId: string;
@@ -24,6 +25,7 @@ export default function PostForm({ userId, post }: Props) {
   const [images, setImages] = useState<{ url: string; name: string }[]>(
     post?.image_urls.map((u) => ({ url: u, name: u.split("/").pop() ?? u })) ?? []
   );
+  const [tags, setTags] = useState<string[]>(post?.tags ?? []);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -73,6 +75,12 @@ export default function PostForm({ userId, post }: Props) {
     setLat(Number(latPick.toFixed(5)));
   }
 
+  function toggleTag(tag: string) {
+    setTags((prev) =>
+      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
+    );
+  }
+
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
@@ -98,6 +106,7 @@ export default function PostForm({ userId, post }: Props) {
           content: content.trim(),
           video_url: videoUrl.trim() || null,
           image_urls: images.map((i) => i.url),
+          tags,
         }),
       });
       const data = await res.json();
@@ -207,6 +216,35 @@ export default function PostForm({ userId, post }: Props) {
           placeholder={"写下旅途中的故事…\n\n可以分段，按下回车换行。尽量用文字讲出画面。"}
           maxLength={20000}
         />
+      </div>
+
+      <div className="note-card relative p-6 sm:p-8">
+        <div className="pin" aria-hidden />
+        <h2 className="mb-1 text-lg font-bold">标签（可选，最多 6 个）</h2>
+        <p className="mb-3 text-xs text-ink-soft">
+          给这篇游记贴上主题，访客可以按标签筛选
+        </p>
+        <div className="flex flex-wrap gap-2">
+          {POST_TAGS.map((tag) => {
+            const active = tags.includes(tag);
+            return (
+              <button
+                key={tag}
+                type="button"
+                onClick={() => toggleTag(tag)}
+                disabled={!active && tags.length >= 6}
+                className={`rounded-full px-3.5 py-1.5 text-sm transition-colors ${
+                  active
+                    ? "bg-accent text-white"
+                    : "border border-[rgba(150,128,92,0.5)] text-ink-soft hover:bg-paper-deep/60"
+                } disabled:opacity-40`}
+              >
+                {active ? "✓ " : ""}
+                {tag}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       <div className="note-card relative p-6 sm:p-8">

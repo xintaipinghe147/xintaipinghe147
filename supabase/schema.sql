@@ -66,6 +66,7 @@ create table if not exists public.posts (
   content text not null,
   image_urls text[] not null default '{}',
   video_url text,
+  tags text[] not null default '{}',
   status text not null default 'published' check (status in ('published', 'pending')),
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()

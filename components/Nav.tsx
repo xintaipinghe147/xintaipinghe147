@@ -28,6 +28,9 @@ export default async function Nav() {
           <Link href="/#latest" className="nav-link hidden sm:inline">
             最新游记
           </Link>
+          <Link href="/timeline" className="nav-link hidden sm:inline">
+            时间线
+          </Link>
           {user ? (
             <>
               {user.role === "member" || user.role === "admin" ? (

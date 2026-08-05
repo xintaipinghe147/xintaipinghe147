@@ -12,6 +12,7 @@ type PostRow = {
   image_urls: string[];
   video_url: string | null;
   status: "published" | "pending";
+  tags: string[];
   created_at: string;
   updated_at: string;
   profiles: { username: string } | null;
@@ -31,6 +32,7 @@ function normalizePost(row: PostRow): Post {
     image_urls: row.image_urls ?? [],
     video_url: row.video_url,
     status: row.status,
+    tags: row.tags ?? [],
     created_at: row.created_at,
     updated_at: row.updated_at,
     author_username: row.profiles?.username ?? "旅人",

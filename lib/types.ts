@@ -21,6 +21,7 @@ export type Post = {
   image_urls: string[];
   video_url: string | null;
   status: "published" | "pending";
+  tags: string[];
   created_at: string;
   updated_at: string;
   author_username: string;
