@@ -33,7 +33,7 @@ export default async function TimelinePage() {
       ) : (
         <div className="relative space-y-10 pl-8 sm:pl-12">
           <div
-            className="absolute bottom-4 left-3 top-2 w-px border-l-2 border-dashed border-[rgba(150,128,92,0.45)] sm:left-4"
+            className="absolute bottom-4 left-3 top-2 w-px border-l-2 border-dashed border-line sm:left-4"
             aria-hidden
           />
           {years.map((year) => (

@@ -46,7 +46,7 @@ export default function ThemeSwitcher() {
                 className={`h-9 rounded-lg border-2 transition-transform hover:scale-105 ${
                   theme === t.id
                     ? "border-accent"
-                    : "border-[rgba(150,128,92,0.35)]"
+                    : "border-line"
                 }`}
                 style={{
                   background: `linear-gradient(135deg, ${t.color} 50%, ${t.color2} 50%)`,

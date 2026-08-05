@@ -29,7 +29,7 @@ export default async function MePage() {
       <div className="note-card relative p-6 sm:p-8">
         <div className="tape" aria-hidden />
         <div className="flex flex-wrap items-center gap-4">
-          <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-full border border-[rgba(150,128,92,0.4)] bg-paper-deep/60 text-3xl">
+          <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-full border border-line bg-paper-deep/60 text-3xl">
             {user.avatar_url ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img

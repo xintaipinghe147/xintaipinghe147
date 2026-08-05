@@ -236,7 +236,7 @@ export default function PostForm({ userId, post }: Props) {
                 className={`rounded-full px-3.5 py-1.5 text-sm transition-colors ${
                   active
                     ? "bg-accent text-white"
-                    : "border border-[rgba(150,128,92,0.5)] text-ink-soft hover:bg-paper-deep/60"
+                    : "border border-line-strong text-ink-soft hover:bg-paper-deep/60"
                 } disabled:opacity-40`}
               >
                 {active ? "✓ " : ""}
@@ -269,7 +269,7 @@ export default function PostForm({ userId, post }: Props) {
                 <img
                   src={img.url}
                   alt={img.name}
-                  className="h-20 w-full rounded-lg border border-[rgba(150,128,92,0.35)] object-cover"
+                  className="h-20 w-full rounded-lg border border-line object-cover"
                 />
                 <button
                   type="button"

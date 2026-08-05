@@ -14,7 +14,7 @@ export default async function Nav() {
   }
 
   return (
-    <header className="sticky top-0 z-30 border-b border-[rgba(150,128,92,0.3)] bg-paper/90 backdrop-blur">
+    <header className="sticky top-0 z-30 border-b border-line bg-paper/90 backdrop-blur">
       <div className="mx-auto flex w-full max-w-4xl items-center justify-between gap-3 px-4 py-3">
         <Link href="/" className="flex items-center gap-2 text-lg font-bold">
           <span aria-hidden>✈</span>

@@ -2,19 +2,35 @@ import Link from "next/link";
 import type { Post } from "@/lib/types";
 import { excerpt, formatDate } from "@/lib/utils";
 
-export default function PostCard({ post, index }: { post: Post; index: number }) {
+export default function PostCard({
+  post,
+  index,
+  featured,
+}: {
+  post: Post;
+  index: number;
+  featured?: boolean;
+}) {
   const rotate = index % 3 === 0 ? "rotate-[0.4deg]" : index % 3 === 1 ? "-rotate-[0.5deg]" : "";
   const cover = post.image_urls[0];
 
   return (
     <Link
       href={`/posts/${post.id}`}
-      className={`note-card group block overflow-hidden transition-transform duration-200 hover:-translate-y-1 hover:shadow-lg ${rotate}`}
+      className={`note-card group block overflow-hidden transition-transform duration-200 hover:-translate-y-1 hover:shadow-lg ${rotate} ${
+        featured ? "md:col-span-2" : ""
+      }`}
     >
       <div className="tape" aria-hidden />
-      <div className="flex flex-col sm:flex-row">
+      <div className={`flex ${featured ? "flex-col md:flex-row" : "flex-col sm:flex-row"}`}>
         {cover ? (
-          <div className="relative h-40 w-full overflow-hidden sm:h-auto sm:w-52 sm:shrink-0">
+          <div
+            className={`relative w-full overflow-hidden ${
+              featured
+                ? "h-52 md:h-auto md:w-2/5 md:shrink-0"
+                : "h-40 sm:h-auto sm:w-52 sm:shrink-0"
+            }`}
+          >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={cover}
@@ -23,17 +39,27 @@ export default function PostCard({ post, index }: { post: Post; index: number })
             />
           </div>
         ) : (
-          <div className="flex h-40 w-full items-center justify-center bg-paper-deep/60 text-4xl sm:h-auto sm:w-52 sm:shrink-0">
+          <div
+            className={`flex w-full items-center justify-center bg-paper-deep/60 text-4xl ${
+              featured
+                ? "h-52 md:h-auto md:w-2/5 md:shrink-0"
+                : "h-40 sm:h-auto sm:w-52 sm:shrink-0"
+            }`}
+          >
             <span aria-hidden>📍</span>
           </div>
         )}
-        <div className="flex-1 p-5">
+        <div className={`flex-1 ${featured ? "p-6" : "p-5"}`}>
           <div className="mb-1 flex items-center gap-2 text-sm text-ink-soft">
             <span>📍 {post.location_name}</span>
             <span aria-hidden>·</span>
             <span>{formatDate(post.created_at)}</span>
           </div>
-          <h2 className="mb-2 text-xl font-bold leading-snug group-hover:text-accent">
+          <h2
+            className={`mb-2 font-bold leading-snug group-hover:text-accent ${
+              featured ? "text-2xl" : "text-xl"
+            }`}
+          >
             {post.title}
           </h2>
           <p className="mb-3 line-clamp-2 text-[15px] leading-relaxed text-ink-soft">

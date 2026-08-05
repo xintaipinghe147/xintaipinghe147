@@ -26,6 +26,7 @@ export default function AmapPicker({ onPick, height = 300, center = null }: Prop
   const [pickedName, setPickedName] = useState("");
   const [candidates, setCandidates] = useState<any[]>([]);
   const [loadError, setLoadError] = useState("");
+  const [searchError, setSearchError] = useState("");
   onPickRef.current = onPick;
 
   useEffect(() => {
@@ -99,6 +100,7 @@ export default function AmapPicker({ onPick, height = 300, center = null }: Prop
     setSearching(true);
     try {
       setCandidates([]);
+      setSearchError("");
       const placeSearch = new window.AMap.PlaceSearch({
         pageSize: 5,
         pageIndex: 1,
@@ -109,18 +111,22 @@ export default function AmapPicker({ onPick, height = 300, center = null }: Prop
           setCandidates(pois.slice(0, 5));
           selectPlace(pois[0]);
         } else {
+          setSearchError("没有搜到精确结果，试试更具体的地名（如“太原市小店区”）");
           // POI 搜不到时，用地理编码试试（比如搜"山西"这类行政区名）
           const geocoder = new window.AMap.Geocoder({});
           geocoder.getLocation(kw, (geoStatus: string, geoResult: any) => {
             const gc = geoResult?.geocodes?.[0];
             if (geoStatus === "complete" && gc?.location) {
+              setSearchError("");
               selectPlace({
                 name: gc.formattedAddress ?? kw,
                 location: gc.location,
                 adname: gc.adname ?? "",
               });
             } else {
-              setPickedName("没有找到这个地点，试试更具体的名字");
+              setSearchError(
+                "搜索失败：请检查高德 Key 的搜索权限，或换个更具体的地名"
+              );
             }
           });
         }
@@ -148,7 +154,7 @@ export default function AmapPicker({ onPick, height = 300, center = null }: Prop
   if (!key || loadError) {
     return (
       <div>
-        <div className="mb-2 overflow-hidden rounded-lg border border-[rgba(150,128,92,0.35)] bg-[#fdfaf0]">
+        <div className="mb-2 overflow-hidden rounded-lg border border-line bg-map-bg">
           <WorldMap points={[]} onPick={(lng, lat) => onPick(lng, lat)} height={height} />
         </div>
         <p className="mt-1 text-xs text-ink-soft">
@@ -187,7 +193,7 @@ export default function AmapPicker({ onPick, height = 300, center = null }: Prop
       <div
         ref={containerRef}
         style={{ height }}
-        className="w-full cursor-crosshair overflow-hidden rounded-lg border border-[rgba(150,128,92,0.35)]"
+        className="w-full cursor-crosshair overflow-hidden rounded-lg border border-line"
       />
       {candidates.length > 0 ? (
         <div className="mt-2 space-y-1">
@@ -197,7 +203,7 @@ export default function AmapPicker({ onPick, height = 300, center = null }: Prop
               key={c.id ?? c.name}
               type="button"
               onClick={() => selectPlace(c)}
-              className="block w-full truncate rounded-lg border border-[rgba(150,128,92,0.3)] bg-white/60 px-3 py-1.5 text-left text-sm hover:border-accent hover:bg-accent-soft/20"
+              className="block w-full truncate rounded-lg border border-line bg-glass px-3 py-1.5 text-left text-sm hover:border-accent hover:bg-accent-soft/20"
             >
               {c.name}
               {c.adname ? (
@@ -206,6 +212,9 @@ export default function AmapPicker({ onPick, height = 300, center = null }: Prop
             </button>
           ))}
         </div>
+      ) : null}
+      {searchError ? (
+        <p className="mt-2 text-sm text-accent">{searchError}</p>
       ) : null}
       {pickedName ? (
         <p className="mt-2 text-sm text-accent">已选：{pickedName}</p>

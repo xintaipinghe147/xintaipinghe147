@@ -86,7 +86,7 @@ export default function MeForm({
       <h2 className="mb-4 text-lg font-bold">编辑个人资料</h2>
 
       <div className="mb-4 flex items-center gap-4">
-        <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-full border border-[rgba(150,128,92,0.4)] bg-paper-deep/60 text-2xl">
+        <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-full border border-line bg-paper-deep/60 text-2xl">
           {avatarUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={avatarUrl} alt="头像" className="h-full w-full object-cover" />

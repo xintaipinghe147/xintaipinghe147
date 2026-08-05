@@ -17,7 +17,7 @@ export default function VideoEmbed({ url }: { url: string }) {
   }
 
   return (
-    <div className="aspect-video w-full overflow-hidden rounded-lg border border-[rgba(150,128,92,0.35)] bg-black/90">
+    <div className="aspect-video w-full overflow-hidden rounded-lg border border-line bg-black/90">
       <iframe
         src={video.embedUrl}
         className="h-full w-full"

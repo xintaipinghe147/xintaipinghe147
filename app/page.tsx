@@ -29,14 +29,14 @@ export default async function HomePage() {
       <section className="note-card relative px-6 py-10 text-center sm:px-10">
         <div className="pin" aria-hidden />
         <div className="stamp">旅行手账</div>
-        <h1 className="mt-4 text-3xl font-bold sm:text-4xl">
+        <h1 className="mt-5 text-4xl font-bold tracking-wide sm:text-5xl">
           把走过的路，写成一册手账
         </h1>
-        <p className="mx-auto mt-3 max-w-xl text-[16px] leading-relaxed text-ink-soft">
+        <p className="mx-auto mt-4 max-w-xl text-[16px] leading-relaxed text-ink-soft">
           点击地图上的足迹，翻开每一段旅程的故事。也可以注册账号，
           留下你的评论，或者分享你自己的旅行日记。
         </p>
-        <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
+        <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
           {canPost ? (
             <Link href="/new" className="btn-primary">
               写一篇游记
@@ -53,13 +53,17 @@ export default async function HomePage() {
       </section>
 
       <section className="note-card p-4 sm:p-6">
-        <h2 className="mb-3 flex items-center gap-2 text-xl font-bold">
-          <span aria-hidden>🗺</span> 世界足迹
-        </h2>
-        <p className="mb-3 text-sm text-ink-soft">
-          共 {points.length} 个足迹{points.length > 0 ? "，点击标记查看游记" : ""}
-        </p>
-        <div className="overflow-hidden rounded-lg border border-[rgba(150,128,92,0.35)] bg-[#fdfaf0]">
+        <div className="mb-3 flex flex-wrap items-end justify-between gap-2">
+          <h2 className="flex items-center gap-2 text-xl font-bold">
+            <span aria-hidden>🗺</span> 世界足迹
+          </h2>
+          <p className="text-sm text-ink-soft">
+            {points.length > 0
+              ? `已点亮 ${points.length} 个地方，点击红色标记查看游记`
+              : "足迹会随着游记慢慢点亮"}
+          </p>
+        </div>
+        <div className="overflow-hidden rounded-lg border border-line bg-map-bg">
           <HomeMap points={points} />
         </div>
       </section>

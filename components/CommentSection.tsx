@@ -109,7 +109,7 @@ export default function CommentSection({
             return (
               <li
                 key={c.id}
-                className="border-b border-dashed border-[rgba(150,128,92,0.35)] pb-3 last:border-0"
+                className="border-b border-dashed border-line pb-3 last:border-0"
               >
                 <div className="mb-1 flex items-center justify-between gap-3">
                   <div className="flex items-center gap-2 text-sm">

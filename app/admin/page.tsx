@@ -69,7 +69,7 @@ export default async function AdminPage() {
         {pending.length === 0 ? (
           <p className="text-sm text-ink-soft">暂时没有等待批准的用户。</p>
         ) : (
-          <ul className="divide-y divide-dashed divide-[rgba(150,128,92,0.35)]">
+          <ul className="divide-y divide-dashed divide-line">
             {pending.map((p) => (
               <li
                 key={p.id}
@@ -95,7 +95,7 @@ export default async function AdminPage() {
 
       <section className="note-card p-6">
         <h2 className="mb-3 text-lg font-bold">全部用户（{all.length}）</h2>
-        <ul className="divide-y divide-dashed divide-[rgba(150,128,92,0.35)]">
+        <ul className="divide-y divide-dashed divide-line">
           {all.map((p) => (
             <li
               key={p.id}
@@ -123,7 +123,7 @@ export default async function AdminPage() {
 
       <section className="note-card p-6">
         <h2 className="mb-3 text-lg font-bold">游记管理（{posts.length}）</h2>
-        <ul className="divide-y divide-dashed divide-[rgba(150,128,92,0.35)]">
+        <ul className="divide-y divide-dashed divide-line">
           {posts.map((post) => (
             <li
               key={post.id}
@@ -158,7 +158,7 @@ export default async function AdminPage() {
 
       <section className="note-card p-6">
         <h2 className="mb-3 text-lg font-bold">最近留言（{comments.length}）</h2>
-        <ul className="divide-y divide-dashed divide-[rgba(150,128,92,0.35)]">
+        <ul className="divide-y divide-dashed divide-line">
           {comments.map((c) => (
             <li
               key={c.id}

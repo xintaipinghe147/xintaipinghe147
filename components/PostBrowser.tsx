@@ -44,7 +44,7 @@ export default function PostBrowser({ posts }: { posts: Post[] }) {
             className={`rounded-full px-3.5 py-1 text-sm ${
               activeTag === null
                 ? "bg-accent text-white"
-                : "border border-[rgba(150,128,92,0.5)] text-ink-soft"
+                : "border border-line-strong text-ink-soft"
             }`}
           >
             全部
@@ -57,7 +57,7 @@ export default function PostBrowser({ posts }: { posts: Post[] }) {
               className={`rounded-full px-3.5 py-1 text-sm ${
                 activeTag === tag
                   ? "bg-accent text-white"
-                  : "border border-[rgba(150,128,92,0.5)] text-ink-soft"
+                  : "border border-line-strong text-ink-soft"
               }`}
             >
               {tag}
@@ -74,7 +74,12 @@ export default function PostBrowser({ posts }: { posts: Post[] }) {
       ) : (
         <div className="grid gap-6 md:grid-cols-2">
           {filtered.map((post, i) => (
-            <PostCard key={post.id} post={post} index={i} />
+            <PostCard
+              key={post.id}
+              post={post}
+              index={i}
+              featured={i === 0 && !query.trim() && !activeTag}
+            />
           ))}
         </div>
       )}

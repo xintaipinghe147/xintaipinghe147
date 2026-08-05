@@ -9,6 +9,11 @@
   --color-accent: #b3543f;
   --color-accent-soft: #e4b7a8;
   --color-stamp: #c0452f;
+  --color-line: rgba(150, 128, 92, 0.35);
+  --color-line-strong: rgba(150, 128, 92, 0.55);
+  --color-glass: rgba(255, 255, 255, 0.5);
+  --color-field: rgba(255, 255, 255, 0.75);
+  --color-map-bg: #fdfaf0;
   --font-journal: "Kaiti SC", "STKaiti", "KaiTi", "楷体", "Noto Serif SC",
     "Songti SC", serif;
 }
@@ -48,6 +53,11 @@ html[data-theme="warm"] {
   --color-accent-soft: #eacba0;
   --color-stamp: #b55a2e;
   --paper-lines: rgba(192, 122, 45, 0.14);
+  --color-line: rgba(192, 122, 45, 0.3);
+  --color-line-strong: rgba(192, 122, 45, 0.5);
+  --color-glass: rgba(255, 255, 255, 0.5);
+  --color-field: rgba(255, 253, 243, 0.8);
+  --color-map-bg: #fdf6e4;
 }
 
 html[data-theme="mist"] {
@@ -60,6 +70,11 @@ html[data-theme="mist"] {
   --color-accent-soft: #b9d6c5;
   --color-stamp: #2f6b4d;
   --paper-lines: rgba(63, 125, 92, 0.12);
+  --color-line: rgba(63, 125, 92, 0.25);
+  --color-line-strong: rgba(63, 125, 92, 0.45);
+  --color-glass: rgba(255, 255, 255, 0.45);
+  --color-field: rgba(251, 253, 249, 0.8);
+  --color-map-bg: #f2f7f2;
 }
 
 html[data-theme="sakura"] {
@@ -72,6 +87,11 @@ html[data-theme="sakura"] {
   --color-accent-soft: #eecdd6;
   --color-stamp: #b35672;
   --paper-lines: rgba(194, 112, 138, 0.12);
+  --color-line: rgba(194, 112, 138, 0.28);
+  --color-line-strong: rgba(194, 112, 138, 0.48);
+  --color-glass: rgba(255, 255, 255, 0.5);
+  --color-field: rgba(255, 250, 250, 0.8);
+  --color-map-bg: #fdf4f4;
 }
 
 html[data-theme="night"] {
@@ -84,12 +104,17 @@ html[data-theme="night"] {
   --color-accent-soft: #6d4438;
   --color-stamp: #e08b6f;
   --paper-lines: rgba(255, 255, 255, 0.05);
+  --color-line: rgba(255, 255, 255, 0.14);
+  --color-line-strong: rgba(255, 255, 255, 0.24);
+  --color-glass: rgba(255, 255, 255, 0.08);
+  --color-field: rgba(255, 255, 255, 0.08);
+  --color-map-bg: #1c212b;
 }
 
 .note-card {
   position: relative;
   background: var(--color-card);
-  border: 1px solid rgba(150, 128, 92, 0.35);
+  border: 1px solid var(--color-line);
   border-radius: 10px;
   box-shadow: 0 3px 10px rgba(90, 70, 40, 0.12),
     inset 0 1px 0 rgba(255, 255, 255, 0.8);
@@ -122,7 +147,7 @@ html[data-theme="night"] {
   letter-spacing: 7px;
   text-indent: 7px;
   transform: rotate(-4deg);
-  background: rgba(255, 255, 255, 0.4);
+  background: var(--color-glass);
   user-select: none;
 }
 
@@ -140,7 +165,7 @@ html[data-theme="night"] {
 }
 
 .hand-dot {
-  border-bottom: 2px dotted rgba(150, 128, 92, 0.6);
+  border-bottom: 2px dotted var(--color-line-strong);
 }
 
 .btn-primary {
@@ -176,9 +201,9 @@ html[data-theme="night"] {
   align-items: center;
   justify-content: center;
   gap: 6px;
-  border: 1px solid rgba(150, 128, 92, 0.55);
+  border: 1px solid var(--color-line-strong);
   color: var(--color-ink);
-  background: rgba(255, 255, 255, 0.5);
+  background: var(--color-glass);
   border-radius: 9999px;
   padding: 8px 20px;
   font-size: 15px;
@@ -187,14 +212,14 @@ html[data-theme="night"] {
 }
 
 .btn-ghost:hover {
-  background: rgba(255, 255, 255, 0.9);
+  background: var(--color-field);
 }
 
 .field {
   width: 100%;
-  border: 1px solid rgba(150, 128, 92, 0.5);
+  border: 1px solid var(--color-line-strong);
   border-radius: 10px;
-  background: rgba(255, 255, 255, 0.75);
+  background: var(--color-field);
   padding: 9px 14px;
   font-size: 15px;
   color: var(--color-ink);
