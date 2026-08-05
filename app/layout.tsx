@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import "./fonts.css";
 import Nav from "@/components/Nav";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
 
@@ -18,16 +19,6 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{
             __html: `try{var t=localStorage.getItem('journal-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}`,
           }}
-        />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link
-          rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossOrigin="anonymous"
-        />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=ZCOOL+KuaiLe&family=Noto+Serif+SC:wght@400;500&display=swap"
-          rel="stylesheet"
         />
       </head>
       <body className="min-h-screen text-ink antialiased">

@@ -82,7 +82,7 @@ export default async function PostPage({
       {post.video_url ? (
         <div className="note-card p-5">
           <h2 className="mb-3 flex items-center gap-2 text-lg font-bold">
-            <span aria-hidden>🎬</span> 影像记录
+            影像记录
           </h2>
           <VideoEmbed url={post.video_url} />
         </div>

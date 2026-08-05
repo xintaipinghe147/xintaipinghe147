@@ -33,7 +33,7 @@ export default function PostBrowser({ posts }: { posts: Post[] }) {
         className="field"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder="🔍 搜索标题、地点、作者…"
+        placeholder="搜索标题、地点、作者…"
         maxLength={40}
       />
       {allTags.length > 0 ? (
