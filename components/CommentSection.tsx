@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { ChatCircleDots } from "@phosphor-icons/react";
 import type { Comment } from "@/lib/types";
 import { formatDateTime } from "@/lib/utils";
 
@@ -60,7 +61,7 @@ export default function CommentSection({
     <section className="note-card relative mt-8 p-6">
       <div className="tape" aria-hidden />
       <h2 className="mb-4 flex items-center gap-2 text-xl font-bold">
-        <span aria-hidden>💬</span> 留言（{comments.length}）
+        <ChatCircleDots size={18} weight="duotone" className="text-accent" /> 留言（{comments.length}）
       </h2>
 
       <div className="mb-5">

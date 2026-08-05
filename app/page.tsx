@@ -1,192 +1,198 @@
 import Link from "next/link";
-import PostBrowser from "@/components/PostBrowser";
-import CheckinBoard from "@/components/CheckinBoard";
-import MessageBoard from "@/components/MessageBoard";
-import Reveal from "@/components/Reveal";
-import {
-  StickerCloud,
-  StickerFlower,
-  StickerHeart,
-  StickerStar,
-} from "@/components/Stickers";
-import { getPublishedPosts } from "@/lib/data";
+import { ArrowRight, Images, NotePencil } from "@phosphor-icons/react/dist/ssr";
+import BlogCard from "@/components/BlogCard";
+import SectionHeading from "@/components/SectionHeading";
+import ShuoshuoFeed from "@/components/ShuoshuoFeed";
+import { getBlogPosts, getShuoshuo } from "@/lib/data";
 import { getSessionUser } from "@/lib/auth";
+import { SITE } from "@/lib/constants";
+import { formatDateShort, postDate, postSummary, readingMinutes } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-  const [posts, user] = await Promise.all([
-    getPublishedPosts(60),
+  const [posts, shuoshuo, user] = await Promise.all([
+    getBlogPosts(30),
+    getShuoshuo(4),
     getSessionUser(),
   ]);
-  const canPost = user?.role === "admin" || user?.role === "member";
+  const canWrite = user?.role === "admin" || user?.role === "member";
   const currentUser = user
     ? { id: user.id, username: user.username, role: user.role }
     : null;
-
+  const featured = posts[0] ?? null;
+  const rest = posts.slice(1, 13);
   const photos = posts
     .flatMap((p) =>
       p.image_urls.slice(0, 3).map((url, i) => ({
         url,
         id: p.id,
-        title: p.title || "友达的手账",
+        title: p.title,
         key: `${p.id}-${i}`,
       }))
     )
-    .slice(0, 12);
+    .slice(0, 6);
 
   return (
     <div className="space-y-16">
-      {/* 顶部 Hero：左文右图的分栏布局 */}
-      <section className="hero-enter grid items-center gap-10 py-8 lg:grid-cols-[1.05fr_0.95fr] lg:py-14">
-        <div className="relative">
-          <StickerFlower className="absolute -left-3 -top-8 h-12 w-12 opacity-80" />
-          <StickerCloud className="absolute right-2 -top-10 h-12 w-14 opacity-70" />
-          <h1 className="font-display text-5xl font-bold leading-tight tracking-tight text-ink sm:text-6xl">
-            友达手账
+      {/* 大封面横幅 */}
+      <section className="hero-enter relative overflow-hidden rounded-[28px] border border-line shadow-[0_18px_50px_rgba(90,72,52,0.14)]">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/blog-hero.jpg"
+          alt=""
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-paper/95 via-paper/75 to-paper/25" />
+        <div className="relative z-10 min-h-[380px] max-w-2xl px-7 py-16 sm:px-10 sm:py-20">
+          <h1 className="font-display text-5xl leading-tight tracking-tight text-ink sm:text-6xl">
+            {SITE.name}
           </h1>
-          <p className="mt-5 max-w-md text-lg leading-relaxed text-ink-soft">
-            把每一天的小日子，和朋友们一起写进这本手账。
+          <p className="mt-5 max-w-md text-lg leading-relaxed text-ink">
+            {SITE.tagline}。
           </p>
-          <div className="mt-7 flex flex-wrap items-center gap-3">
-            {canPost ? (
-              <Link href="/new" className="btn-primary">
-                写一篇手账
-              </Link>
-            ) : (
-              <Link href="/signup" className="btn-primary">
-                加入我们
-              </Link>
-            )}
-            <Link href="/timeline" className="btn-ghost">
-              翻看手账本
+          <div className="mt-8 flex flex-wrap items-center gap-3">
+            <Link href="/blog" className="btn-primary">
+              开始阅读
+              <ArrowRight size={16} weight="bold" />
+            </Link>
+            <Link href="/about" className="btn-ghost">
+              关于我
             </Link>
           </div>
-          <div className="mt-7 flex flex-wrap gap-2 text-sm text-ink-soft">
-            <a
-              href="#checkin"
-              className="rounded-full bg-paper-deep/80 px-3.5 py-1.5 transition-colors hover:text-accent"
-            >
-              日常打卡
-            </a>
-            <a
-              href="#albums"
-              className="rounded-full bg-paper-deep/80 px-3.5 py-1.5 transition-colors hover:text-accent"
-            >
-              好友相册
-            </a>
-            <a
-              href="#board"
-              className="rounded-full bg-paper-deep/80 px-3.5 py-1.5 transition-colors hover:text-accent"
-            >
-              留言板
-            </a>
-          </div>
         </div>
+      </section>
 
-        <div className="relative mx-auto w-full max-w-md lg:max-w-none">
-          {photos.length > 0 ? (
-            <div className="grid grid-cols-2 gap-3 -rotate-1">
-              {photos.slice(0, 4).map((ph, i) => (
-                <Link
-                  key={ph.key}
-                  href={`/posts/${ph.id}`}
-                  className={`block overflow-hidden rounded-2xl border border-line bg-paper-deep shadow-[0_12px_30px_rgba(170,140,110,0.16)] transition-transform hover:-translate-y-1 ${
-                    i % 2 === 0 ? "translate-y-2" : ""
-                  }`}
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={ph.url}
-                    alt={ph.title}
-                    className="aspect-[4/3] w-full object-cover"
-                  />
-                </Link>
-              ))}
-            </div>
-          ) : (
-            <div className="overflow-hidden rounded-2xl border border-line shadow-[0_12px_30px_rgba(170,140,110,0.16)]">
+      {/* 分类快捷入口 */}
+      <section>
+        <div className="flex flex-wrap gap-2.5">
+          <Link href="/blog" className="chip chip-active">
+            全部文章
+          </Link>
+          {SITE.categories.map((c) => (
+            <Link key={c} href={`/category/${encodeURIComponent(c)}`} className="chip">
+              {c}
+            </Link>
+          ))}
+          <Link href="/archive" className="chip">
+            按年月归档
+          </Link>
+        </div>
+      </section>
+
+      {/* 最新文章：置顶 + 瀑布流 */}
+      <section>
+        <SectionHeading title="最新文章" href="/blog" hrefLabel="查看全部" />
+        {featured ? (
+          <Link
+            href={`/posts/${featured.id}`}
+            className="note-card group mb-6 grid overflow-hidden transition-transform duration-200 hover:-translate-y-1 md:grid-cols-2"
+          >
+            <div className="relative aspect-[16/9] overflow-hidden md:aspect-auto md:h-full">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="/hero-poster.jpg"
-                alt="友达手账"
-                className="aspect-[4/3] w-full object-cover"
+                src={featured.image_urls[0] ?? "/blog-hero.jpg"}
+                alt=""
+                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
               />
+              <span className="absolute left-4 top-4 rounded-full bg-paper/90 px-3 py-1 text-xs font-bold text-accent">
+                最新
+              </span>
             </div>
-          )}
-          <StickerStar className="absolute -right-3 -top-4 h-10 w-10" />
-          <StickerHeart className="absolute -bottom-4 left-8 h-11 w-11" />
-        </div>
-      </section>
-
-      {/* 日常打卡 */}
-      <section id="checkin" className="scroll-mt-24">
-        <Reveal>
-          <h2 className="font-display mb-4 flex items-center gap-2 text-2xl font-bold">
-            <StickerFlower className="h-7 w-7" />
-            日常打卡
-          </h2>
-          <CheckinBoard currentUser={currentUser} />
-        </Reveal>
-      </section>
-
-      {/* 好友相册 */}
-      <section id="albums" className="scroll-mt-24">
-        <Reveal delay={60}>
-          <h2 className="font-display mb-4 flex items-center gap-2 text-2xl font-bold">
-            <StickerStar className="h-7 w-7" />
-            好友相册
-          </h2>
-          {photos.length === 0 ? (
-            <div className="note-card px-6 py-12 text-center text-ink-soft">
-              相册还是空的，和朋友一起写下手账，照片会出现在这里。
+            <div className="flex flex-col justify-center p-6 sm:p-8">
+              <div className="flex items-center gap-2 text-xs text-ink-soft">
+                <span className="rounded-full bg-accent-soft px-2.5 py-0.5 font-bold text-accent">
+                  {featured.category}
+                </span>
+                <span>{formatDateShort(postDate(featured))}</span>
+                <span aria-hidden>·</span>
+                <span>{readingMinutes(featured.content)} 分钟</span>
+              </div>
+              <h2 className="font-display mt-4 text-2xl leading-snug text-ink transition-colors group-hover:text-accent sm:text-3xl">
+                {featured.title}
+              </h2>
+              <p className="mt-3 line-clamp-3 leading-relaxed text-ink-soft">
+                {postSummary(featured, 110)}
+              </p>
+              <span className="mt-5 inline-flex items-center gap-1.5 text-sm font-bold text-accent">
+                继续阅读
+                <ArrowRight
+                  size={15}
+                  weight="bold"
+                  className="transition-transform group-hover:translate-x-1"
+                />
+              </span>
             </div>
-          ) : (
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
-              {photos.map((ph) => (
-                <Link
-                  key={ph.key}
-                  href={`/posts/${ph.id}`}
-                  className="group relative block aspect-square overflow-hidden rounded-2xl border border-line bg-paper-deep transition-transform hover:-translate-y-0.5"
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={ph.url}
-                    alt={ph.title}
-                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                  />
-                </Link>
-              ))}
-            </div>
-          )}
-        </Reveal>
-      </section>
-
-      {/* 留言板 */}
-      <section id="board" className="scroll-mt-24">
-        <Reveal delay={60}>
-          <h2 className="font-display mb-4 flex items-center gap-2 text-2xl font-bold">
-            <StickerHeart className="h-7 w-7" />
-            留言板
-          </h2>
-          <MessageBoard currentUser={currentUser} />
-        </Reveal>
-      </section>
-
-      {/* 最新手账 */}
-      <section className="space-y-4">
-        <Reveal delay={60}>
-          <div className="flex items-end justify-between gap-3">
-            <h2 className="font-display flex items-center gap-2 text-2xl font-bold">
-              <StickerCloud className="h-7 w-7" />
-              最新手账
-            </h2>
-            <Link href="/timeline" className="nav-link text-sm">
-              查看全部 →
-            </Link>
+          </Link>
+        ) : (
+          <div className="note-card px-6 py-14 text-center text-ink-soft">
+            还没有文章，来写下第一篇吧。
           </div>
-          <PostBrowser posts={posts.slice(0, 6)} />
-        </Reveal>
+        )}
+
+        {rest.length > 0 ? (
+          <div className="masonry">
+            {rest.map((post, i) => (
+              <div key={post.id} className="masonry-item">
+                <BlogCard post={post} index={i} />
+              </div>
+            ))}
+          </div>
+        ) : null}
+      </section>
+
+      {/* 碎碎念 */}
+      <section>
+        <SectionHeading title="碎碎念" href="/shuoshuo" hrefLabel="全部碎碎念" />
+        <ShuoshuoFeed currentUser={currentUser} />
+      </section>
+
+      {/* 相册预览 */}
+      <section>
+        <SectionHeading title="相册" href="/album" hrefLabel="去相册" />
+        {photos.length === 0 ? (
+          <div className="note-card px-6 py-12 text-center text-ink-soft">
+            相册还空着，写文章时带上照片，它们会出现在这里。
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+            {photos.map((ph) => (
+              <Link
+                key={ph.key}
+                href={`/posts/${ph.id}`}
+                className="group relative block aspect-square overflow-hidden rounded-2xl border border-line bg-paper-deep"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={ph.url}
+                  alt={ph.title}
+                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.05]"
+                />
+              </Link>
+            ))}
+          </div>
+        )}
+      </section>
+
+      {/* 底部引导 */}
+      <section className="note-card relative overflow-hidden p-8 text-center sm:p-12">
+        <div className="pin" aria-hidden />
+        <Images size={26} weight="duotone" className="mx-auto text-accent" />
+        <h2 className="font-display mt-3 text-2xl text-ink">
+          {canWrite ? "今天想写点什么？" : "想在这里写点什么吗？"}
+        </h2>
+        <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-ink-soft">
+          {canWrite
+            ? "随笔、读书笔记、碎碎念，写下来就是自己的小历史。"
+            : "申请一个账号，获得批准后就可以把日子写下来。"}
+        </p>
+        <Link
+          href={canWrite ? "/new" : "/signup"}
+          className="btn-primary mt-6"
+        >
+          <NotePencil size={16} weight="fill" />
+          {canWrite ? "写文章" : "申请加入"}
+        </Link>
       </section>
     </div>
   );

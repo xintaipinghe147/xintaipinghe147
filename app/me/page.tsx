@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { UserCircle } from "@phosphor-icons/react/dist/ssr";
 import PostCard from "@/components/PostCard";
 import MeForm from "@/components/MeForm";
 import { getPostsByAuthor } from "@/lib/data";
@@ -43,7 +44,7 @@ export default async function MePage() {
                 className="h-full w-full object-cover"
               />
             ) : (
-              <span aria-hidden>👤</span>
+              <UserCircle size={30} weight="duotone" className="text-ink-soft/50" />
             )}
           </div>
           <div className="flex-1">

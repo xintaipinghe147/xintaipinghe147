@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { Heart } from "@phosphor-icons/react";
 
 type Props = {
   postId: string;
@@ -50,9 +51,7 @@ export default function LikeButton({
       className={`btn-ghost ${liked ? "border-accent bg-accent-soft/50 text-accent" : ""}`}
       aria-pressed={liked}
     >
-      <span aria-hidden className="text-lg leading-none">
-        {liked ? "❤️" : "🤍"}
-      </span>
+      <Heart size={17} weight={liked ? "fill" : "regular"} aria-hidden />
       <span>{liked ? "已喜欢" : "喜欢"}</span>
       <span className="text-sm opacity-80">{count}</span>
     </button>

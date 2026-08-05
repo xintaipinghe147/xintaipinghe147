@@ -18,6 +18,8 @@ export type Post = {
   lat: number | null;
   lng: number | null;
   content: string;
+  summary: string | null;
+  category: string | null;
   image_urls: string[];
   video_url: string | null;
   status: "published" | "pending";
@@ -28,6 +30,7 @@ export type Post = {
   author_username: string;
   like_count: number;
   comment_count: number;
+  views: number;
 };
 
 export type Comment = {
@@ -47,4 +50,18 @@ export type SessionUser = {
   created_at: string;
   bio: string | null;
   avatar_url: string | null;
+};
+
+export type Shuoshuo = {
+  id: string;
+  author_id: string;
+  content: string;
+  created_at: string;
+  author_username: string;
+};
+
+export type MarkdownHeading = {
+  id: string;
+  level: number;
+  text: string;
 };

@@ -1,18 +1,35 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { requireMember } from "@/lib/auth";
-import { POST_TAGS } from "@/lib/constants";
+import { insertPost } from "@/lib/data";
+import { POST_TAGS, SITE } from "@/lib/constants";
+
+const ALLOWED_CATEGORIES = [
+  ...SITE.categories,
+  SITE.defaultCategory,
+] as string[];
+
+function cleanCategory(value: unknown, tags: string[]): string {
+  const raw = String(value ?? "").trim();
+  if (ALLOWED_CATEGORIES.includes(raw)) return raw;
+  if (tags.length > 0 && ALLOWED_CATEGORIES.includes(tags[0])) return tags[0];
+  return SITE.defaultCategory;
+}
 
 export async function POST(request: Request) {
   const user = await requireMember();
   if (!user) {
-    return NextResponse.json({ error: "登录并获批后才能发布日记" }, { status: 401 });
+    return NextResponse.json(
+      { error: "登录并获批准后才能发布文章" },
+      { status: 401 }
+    );
   }
 
   const body = await request.json();
   const title = String(body.title ?? "").trim().slice(0, 80);
+  const content = String(body.content ?? "").trim().slice(0, 40000);
+  const summary = String(body.summary ?? "").trim().slice(0, 240);
   const location_name = String(body.location_name ?? "").trim().slice(0, 40);
-  const content = String(body.content ?? "").trim().slice(0, 20000);
   const lat = body.lat === null || body.lat === undefined || body.lat === ""
     ? null
     : Number(body.lat);
@@ -43,41 +60,35 @@ export async function POST(request: Request) {
         .slice(0, 6)
         .map((t: string) => t.trim())
     : [];
+  const category = cleanCategory(body.category, tags);
 
-  if (!content) {
-    return NextResponse.json({ error: "手账正文不能为空" }, { status: 400 });
-  }
-  if (
-    (lat === null) !== (lng === null) ||
-    (lat !== null && !Number.isFinite(lat)) ||
-    (lng !== null && !Number.isFinite(lng))
-  ) {
-    return NextResponse.json({ error: "经纬度需要一起填写" }, { status: 400 });
-  }
-
-  const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("posts")
-    .insert({
-      author_id: user.id,
-      title,
-      location_name,
-      lat,
-      lng,
-      content,
-      image_urls,
-      video_url,
-      tags,
-      occurred_at,
-    })
-    .select("id")
-    .single();
-
-  if (error || !data) {
+  if (!title || !content) {
     return NextResponse.json(
-      { error: "发布失败：" + (error?.message ?? "未知错误") },
+      { error: "标题和正文都不能为空" },
+      { status: 400 }
+    );
+  }
+
+  const result = await insertPost({
+    author_id: user.id,
+    title,
+    summary: summary || null,
+    category,
+    location_name,
+    lat,
+    lng,
+    content,
+    image_urls,
+    video_url,
+    tags,
+    occurred_at,
+  });
+
+  if (result.error || !result.id) {
+    return NextResponse.json(
+      { error: `发布失败：${result.error?.message ?? "未知错误"}` },
       { status: 500 }
     );
   }
-  return NextResponse.json({ id: data.id });
+  return NextResponse.json({ id: result.id });
 }

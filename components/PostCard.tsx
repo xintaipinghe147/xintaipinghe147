@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Camera, ChatCircle, MapPin } from "@phosphor-icons/react/dist/ssr";
 import type { Post } from "@/lib/types";
 import { excerpt, formatDate, postDate } from "@/lib/utils";
 
@@ -45,12 +46,17 @@ export default function PostCard({
                 : "h-40 sm:h-auto sm:w-52 sm:shrink-0"
             }`}
           >
-            <span aria-hidden>📍</span>
+            <Camera size={26} weight="duotone" className="text-ink-soft/40" />
           </div>
         )}
         <div className={`flex-1 ${featured ? "p-6" : "p-5"}`}>
           <div className="mb-1 flex items-center gap-2 text-sm text-ink-soft">
-            {post.location_name ? <span>📍 {post.location_name}</span> : null}
+            {post.location_name ? (
+              <span className="inline-flex items-center gap-1">
+                <MapPin size={13} weight="duotone" />
+                {post.location_name}
+              </span>
+            ) : null}
             {post.location_name ? (
               <span aria-hidden>·</span>
             ) : null}
@@ -69,7 +75,10 @@ export default function PostCard({
           <div className="flex items-center gap-4 text-sm text-ink-soft/80">
             <span className="font-bold text-accent/80">{post.author_username}</span>
             <span>❤ {post.like_count}</span>
-            <span>💬 {post.comment_count}</span>
+            <span className="inline-flex items-center gap-1">
+              <ChatCircle size={13} weight="duotone" />
+              {post.comment_count}
+            </span>
             <span className="ml-auto hidden text-accent sm:inline">
               翻开看看 →
             </span>

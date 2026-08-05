@@ -1,7 +1,20 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { getSessionUser } from "@/lib/auth";
-import { POST_TAGS } from "@/lib/constants";
+import { updatePost } from "@/lib/data";
+import { POST_TAGS, SITE } from "@/lib/constants";
+
+const ALLOWED_CATEGORIES = [
+  ...SITE.categories,
+  SITE.defaultCategory,
+] as string[];
+
+function cleanCategory(value: unknown, tags: string[]): string {
+  const raw = String(value ?? "").trim();
+  if (ALLOWED_CATEGORIES.includes(raw)) return raw;
+  if (tags.length > 0 && ALLOWED_CATEGORIES.includes(tags[0])) return tags[0];
+  return SITE.defaultCategory;
+}
 
 export async function DELETE(
   _request: Request,
@@ -20,7 +33,7 @@ export async function DELETE(
     .eq("id", id)
     .maybeSingle();
   if (!post) {
-    return NextResponse.json({ error: "日记不存在" }, { status: 404 });
+    return NextResponse.json({ error: "文章不存在" }, { status: 404 });
   }
   if (post.author_id !== user.id && user.role !== "admin") {
     return NextResponse.json({ error: "没有权限删除" }, { status: 403 });
@@ -29,7 +42,7 @@ export async function DELETE(
   const { error } = await supabase.from("posts").delete().eq("id", id);
   if (error) {
     return NextResponse.json(
-      { error: "删除失败：" + error.message },
+      { error: `删除失败：${error.message}` },
       { status: 500 }
     );
   }
@@ -53,7 +66,7 @@ export async function PATCH(
     .eq("id", id)
     .maybeSingle();
   if (!post) {
-    return NextResponse.json({ error: "日记不存在" }, { status: 404 });
+    return NextResponse.json({ error: "文章不存在" }, { status: 404 });
   }
   if (post.author_id !== user.id && user.role !== "admin") {
     return NextResponse.json({ error: "没有权限编辑" }, { status: 403 });
@@ -61,8 +74,9 @@ export async function PATCH(
 
   const body = await request.json();
   const title = String(body.title ?? "").trim().slice(0, 80);
+  const content = String(body.content ?? "").trim().slice(0, 40000);
+  const summary = String(body.summary ?? "").trim().slice(0, 240);
   const location_name = String(body.location_name ?? "").trim().slice(0, 40);
-  const content = String(body.content ?? "").trim().slice(0, 20000);
   const lat = body.lat === null || body.lat === undefined || body.lat === ""
     ? null
     : Number(body.lat);
@@ -93,41 +107,35 @@ export async function PATCH(
         .slice(0, 6)
         .map((t: string) => t.trim())
     : [];
+  const category = cleanCategory(body.category, tags);
 
-  if (!content) {
-    return NextResponse.json({ error: "手账正文不能为空" }, { status: 400 });
-  }
-  if (
-    (lat === null) !== (lng === null) ||
-    (lat !== null && !Number.isFinite(lat)) ||
-    (lng !== null && !Number.isFinite(lng))
-  ) {
-    return NextResponse.json({ error: "经纬度需要一起填写" }, { status: 400 });
-  }
-
-  const { data, error } = await supabase
-    .from("posts")
-    .update({
-      title,
-      location_name,
-      lat,
-      lng,
-      content,
-      image_urls,
-      video_url,
-      tags,
-      occurred_at,
-      updated_at: new Date().toISOString(),
-    })
-    .eq("id", id)
-    .select("id")
-    .single();
-
-  if (error || !data) {
+  if (!title || !content) {
     return NextResponse.json(
-      { error: "保存失败：" + (error?.message ?? "未知错误") },
+      { error: "标题和正文都不能为空" },
+      { status: 400 }
+    );
+  }
+
+  const result = await updatePost(id, {
+    title,
+    summary: summary || null,
+    category,
+    location_name,
+    lat,
+    lng,
+    content,
+    image_urls,
+    video_url,
+    tags,
+    occurred_at,
+    updated_at: new Date().toISOString(),
+  });
+
+  if (result.error || !result.id) {
+    return NextResponse.json(
+      { error: `保存失败：${result.error?.message ?? "未知错误"}` },
       { status: 500 }
     );
   }
-  return NextResponse.json({ id: data.id });
+  return NextResponse.json({ id: result.id });
 }

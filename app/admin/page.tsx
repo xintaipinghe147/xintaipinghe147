@@ -138,8 +138,7 @@ export default async function AdminPage() {
                 </Link>
                 <div className="text-sm text-ink-soft">
                   {post.author_username} · {post.location_name} ·{" "}
-                  {formatDateTime(post.created_at)} · ❤{post.like_count} · 💬
-                  {post.comment_count}
+                  {formatDateTime(post.created_at)} · 喜欢 {post.like_count} · 评论 {post.comment_count}
                 </div>
               </div>
               <form action={deletePost}>

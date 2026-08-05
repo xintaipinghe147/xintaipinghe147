@@ -2,11 +2,15 @@ import type { Metadata } from "next";
 import "./globals.css";
 import "./fonts.css";
 import Nav from "@/components/Nav";
-import ThemeSwitcher from "@/components/ThemeSwitcher";
+import BackToTop from "@/components/BackToTop";
+import { SITE, THEME_KEY } from "@/lib/constants";
 
 export const metadata: Metadata = {
-  title: "友达手账 · 共同友情手账记录",
-  description: "和朋友们一起写手账、日常打卡、分享照片、互相留言。",
+  title: {
+    default: `${SITE.name} · ${SITE.tagline}`,
+    template: `%s · ${SITE.name}`,
+  },
+  description: SITE.description,
 };
 
 export default function RootLayout({
@@ -17,22 +21,30 @@ export default function RootLayout({
       <head>
         <script
           dangerouslySetInnerHTML={{
-            __html: `try{var t=localStorage.getItem('journal-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}`,
+            __html: `try{var t=localStorage.getItem('${THEME_KEY}');if(t==='dark'||t==='light'){document.documentElement.dataset.theme=t}else if(window.matchMedia('(prefers-color-scheme: dark)').matches){document.documentElement.dataset.theme='dark'}}catch(e){}`,
           }}
         />
       </head>
-      <body className="min-h-screen text-ink antialiased">
+      <body className="min-h-[100dvh] text-ink antialiased">
+        <div className="grain" aria-hidden />
         <Nav />
-        <main className="mx-auto w-full max-w-6xl px-4 pb-20 pt-6">
+        <main className="mx-auto w-full max-w-6xl px-4 pb-24 pt-8 sm:px-6">
           {children}
         </main>
-        <ThemeSwitcher />
-        <footer className="pb-8 text-center text-sm text-ink-soft/70">
-          <p>把每一天的小日子，一起写进这本手账。</p>
-          <p className="mt-1 text-xs text-ink-soft/50">
-            版本 {process.env.NEXT_PUBLIC_APP_VERSION}
-          </p>
+        <footer className="border-t border-line py-10">
+          <div className="mx-auto max-w-6xl px-4 text-center sm:px-6">
+            <p className="font-display text-lg text-ink">
+              {SITE.name}
+            </p>
+            <p className="mt-2 text-sm text-ink-soft">
+              把日子过成喜欢的样子，然后写下来。
+            </p>
+            <p className="mt-3 text-xs text-ink-soft/80">
+              喜欢的话，去留言板说说话吧。
+            </p>
+          </div>
         </footer>
+        <BackToTop />
       </body>
     </html>
   );

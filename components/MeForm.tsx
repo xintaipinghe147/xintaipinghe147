@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { UserCircle } from "@phosphor-icons/react";
 import { createClient } from "@/lib/supabase/client";
 
 type Props = {
@@ -91,7 +92,7 @@ export default function MeForm({
             // eslint-disable-next-line @next/next/no-img-element
             <img src={avatarUrl} alt="头像" className="h-full w-full object-cover" />
           ) : (
-            <span aria-hidden>👤</span>
+            <UserCircle size={26} weight="duotone" className="text-ink-soft/50" />
           )}
         </div>
         <div>

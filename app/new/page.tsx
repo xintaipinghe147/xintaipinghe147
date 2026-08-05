@@ -10,9 +10,9 @@ export default async function NewPostPage() {
     return (
       <div className="note-card mx-auto max-w-md p-8 text-center">
         <div className="pin" aria-hidden />
-        <h1 className="text-xl font-bold">还没有发布权限</h1>
+        <h1 className="font-display text-2xl">还没有发布权限</h1>
         <p className="mt-3 leading-relaxed text-ink-soft">
-          你的账号正在等待站长批准。批准之后，就可以在这里写自己的手账了。
+          你的账号正在等待站长批准。批准之后，就可以在这里写自己的文章了。
         </p>
         <Link href="/" className="btn-ghost mt-5">
           回到首页
