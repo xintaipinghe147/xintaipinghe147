@@ -27,7 +27,10 @@ export default function RootLayout({
         </main>
         <ThemeSwitcher />
         <footer className="pb-8 text-center text-sm text-ink-soft/70">
-          把走过的路，写成一册手账
+          <p>把走过的路，写成一册手账</p>
+          <p className="mt-1 text-xs text-ink-soft/50">
+            版本 {process.env.NEXT_PUBLIC_APP_VERSION}
+          </p>
         </footer>
       </body>
     </html>
