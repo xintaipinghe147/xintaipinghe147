@@ -88,7 +88,7 @@ export default function CheckinBoard({ currentUser }: Props) {
             value={note}
             onChange={(e) => setNote(e.target.value)}
             maxLength={80}
-            placeholder="比如：今天和朋友吃了冰淇淋 🍦"
+            placeholder="比如：今天和朋友吃了好吃的"
             onKeyDown={(e) => {
               if (e.key === "Enter") submit();
             }}
