@@ -24,7 +24,9 @@ as $$
   select role from public.profiles where id = uid
 $$;
 
--- 注册后自动创建资料；第一个使用管理员邮箱注册的人自动成为管理员
+-- 注册后自动创建资料；第一个注册的人自动成为站长，
+-- 请网站部署完成后立即用你自己的邮箱注册。
+-- 之后注册的人都是"待批准"状态，由站长在管理台批准后才能发游记。
 create or replace function public.handle_new_user()
 returns trigger
 language plpgsql
@@ -35,7 +37,7 @@ declare
   new_role text;
 begin
   new_role := case
-    when new.email = '你的管理员邮箱@example.com' then 'admin'
+    when not exists (select 1 from public.profiles where role = 'admin') then 'admin'
     else 'pending'
   end;
   insert into public.profiles (id, username, role)
@@ -176,4 +178,4 @@ create policy "owners can delete images" on storage.objects for delete
   using (bucket_id = 'images' and owner = auth.uid());
 
 -- 完成
-select '初始化完成！请关闭本页面前的邮箱确认开关：Authentication → Sign In / Up → Email → Confirm email 设为关闭';
+select '初始化完成！';

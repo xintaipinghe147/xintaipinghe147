@@ -43,4 +43,6 @@ export type SessionUser = {
   username: string;
   role: Role;
   created_at: string;
+  bio: string | null;
+  avatar_url: string | null;
 };

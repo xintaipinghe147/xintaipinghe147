@@ -66,7 +66,7 @@ export default async function PostPage({
               <img
                 src={url}
                 alt={`${post.title} 图片 ${i + 1}`}
-                className="max-h-[480px] w-full rounded-md object-cover"
+                className="w-full rounded-md object-contain"
                 loading="lazy"
               />
             </a>
@@ -98,7 +98,15 @@ export default async function PostPage({
           signedIn={!!user}
         />
         {canManage ? (
-          <DeletePostButton postId={post.id} />
+          <>
+            <Link
+              href={`/posts/${post.id}/edit`}
+              className="btn-ghost border-accent/50 text-sm text-accent"
+            >
+              编辑
+            </Link>
+            <DeletePostButton postId={post.id} />
+          </>
         ) : null}
         <Link href="/" className="btn-ghost">
           ← 回到足迹地图

@@ -11,7 +11,7 @@ export const getSessionUser = cache(async (): Promise<SessionUser | null> => {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("username, role, created_at")
+    .select("username, role, created_at, bio, avatar_url")
     .eq("id", user.id)
     .maybeSingle();
 
@@ -21,6 +21,8 @@ export const getSessionUser = cache(async (): Promise<SessionUser | null> => {
     username: profile?.username ?? user.email.split("@")[0] ?? "旅人",
     role: profile?.role ?? "pending",
     created_at: profile?.created_at ?? new Date().toISOString(),
+    bio: profile?.bio ?? null,
+    avatar_url: profile?.avatar_url ?? null,
   };
 });
 

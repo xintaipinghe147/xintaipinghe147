@@ -3,19 +3,27 @@
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import WorldMap from "@/components/WorldMap";
+import AmapPicker from "@/components/AmapPicker";
+import type { Post } from "@/lib/types";
 
-export default function PostForm({ userId }: { userId: string }) {
+type Props = {
+  userId: string;
+  post?: Post | null;
+};
+
+export default function PostForm({ userId, post }: Props) {
   const router = useRouter();
   const supabase = createClient();
 
-  const [title, setTitle] = useState("");
-  const [locationName, setLocationName] = useState("");
-  const [lat, setLat] = useState<number | null>(null);
-  const [lng, setLng] = useState<number | null>(null);
-  const [content, setContent] = useState("");
-  const [videoUrl, setVideoUrl] = useState("");
-  const [images, setImages] = useState<{ url: string; name: string }[]>([]);
+  const [title, setTitle] = useState(post?.title ?? "");
+  const [locationName, setLocationName] = useState(post?.location_name ?? "");
+  const [lat, setLat] = useState<number | null>(post?.lat ?? null);
+  const [lng, setLng] = useState<number | null>(post?.lng ?? null);
+  const [content, setContent] = useState(post?.content ?? "");
+  const [videoUrl, setVideoUrl] = useState(post?.video_url ?? "");
+  const [images, setImages] = useState<{ url: string; name: string }[]>(
+    post?.image_urls.map((u) => ({ url: u, name: u.split("/").pop() ?? u })) ?? []
+  );
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -34,8 +42,8 @@ export default function PostForm({ userId }: { userId: string }) {
         setError("只能上传图片文件");
         continue;
       }
-      if (file.size > 4 * 1024 * 1024) {
-        setError("单张图片请控制在 4MB 以内");
+      if (file.size > 10 * 1024 * 1024) {
+        setError("单张图片请控制在 10MB 以内");
         continue;
       }
       const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
@@ -79,8 +87,8 @@ export default function PostForm({ userId }: { userId: string }) {
 
     setBusy(true);
     try {
-      const res = await fetch("/api/posts", {
-        method: "POST",
+      const res = await fetch(post ? `/api/posts/${post.id}` : "/api/posts", {
+        method: post ? "PATCH" : "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           title: title.trim(),
@@ -108,7 +116,9 @@ export default function PostForm({ userId }: { userId: string }) {
     <form onSubmit={submit} className="space-y-6">
       <div className="note-card relative p-6 sm:p-8">
         <div className="tape" aria-hidden />
-        <h1 className="mb-5 text-2xl font-bold">✎ 写一篇游记</h1>
+        <h1 className="mb-5 text-2xl font-bold">
+          {post ? "✎ 编辑这篇游记" : "✎ 写一篇游记"}
+        </h1>
 
         <div className="space-y-4">
           <div>
@@ -169,9 +179,11 @@ export default function PostForm({ userId }: { userId: string }) {
             <label className="mb-1 block text-sm text-ink-soft">
               在地图上点选足迹位置
             </label>
-            <div className="overflow-hidden rounded-lg border border-[rgba(150,128,92,0.35)] bg-[#fdfaf0]">
-              <WorldMap points={[]} onPick={pickLocation} height={300} />
-            </div>
+            <AmapPicker
+              onPick={pickLocation}
+              height={300}
+              center={post ? [post.lng, post.lat] : null}
+            />
             {lat !== null && lng !== null ? (
               <p className="mt-2 text-sm text-accent">
                 已选坐标：{lat} , {lng}
@@ -209,7 +221,7 @@ export default function PostForm({ userId }: { userId: string }) {
           className="block w-full text-sm text-ink-soft file:mr-3 file:rounded-full file:border-0 file:bg-accent file:px-4 file:py-2 file:text-sm file:text-white"
         />
         <p className="mt-2 text-xs text-ink-soft">
-          单张不超过 4MB，一次最多 9 张，会占用网站的免费存储空间，建议选最精彩的。
+          单张不超过 10MB，一次最多 9 张，会占用网站的免费存储空间，建议选最精彩的。
         </p>
         {images.length > 0 ? (
           <div className="mt-4 grid grid-cols-3 gap-3 sm:grid-cols-5">
@@ -257,7 +269,7 @@ export default function PostForm({ userId }: { userId: string }) {
 
       <div className="flex items-center gap-3">
         <button type="submit" disabled={busy} className="btn-primary">
-          {busy ? "发布中…" : "发布游记"}
+          {busy ? "保存中…" : post ? "保存修改" : "发布游记"}
         </button>
         <button
           type="button"

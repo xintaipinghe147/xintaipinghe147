@@ -1,6 +1,6 @@
 import Link from "next/link";
 import WorldMap, { type MapPoint } from "@/components/WorldMap";
-import PostCard from "@/components/PostCard";
+import PostBrowser from "@/components/PostBrowser";
 import { getPublishedPosts } from "@/lib/data";
 import { getSessionUser } from "@/lib/auth";
 
@@ -64,17 +64,7 @@ export default async function HomePage() {
         <h2 className="flex items-center gap-2 text-xl font-bold">
           <span aria-hidden>✎</span> 最新游记
         </h2>
-        {posts.length === 0 ? (
-          <div className="note-card px-6 py-12 text-center text-ink-soft">
-            还没有游记。等第一段旅程被写下来，这里就会亮起来。
-          </div>
-        ) : (
-          <div className="grid gap-6 md:grid-cols-2">
-            {posts.map((post, i) => (
-              <PostCard key={post.id} post={post} index={i} />
-            ))}
-          </div>
-        )}
+        <PostBrowser posts={posts} />
       </section>
     </div>
   );

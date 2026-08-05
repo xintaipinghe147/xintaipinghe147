@@ -49,15 +49,19 @@ function buildOption(points: MapPoint[]) {
       zoom: 1.15,
       scaleLimit: { min: 1, max: 20 },
       itemStyle: {
-        areaColor: "#e9dcc2",
-        borderColor: "#b3a084",
-        borderWidth: 0.6,
-        shadowColor: "rgba(90,70,40,0.18)",
-        shadowBlur: 8,
+        areaColor: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+          { offset: 0, color: "#f0e4c9" },
+          { offset: 1, color: "#dfcda3" },
+        ]),
+        borderColor: "#a99678",
+        borderWidth: 0.8,
+        shadowColor: "rgba(90,70,40,0.28)",
+        shadowBlur: 10,
+        shadowOffsetY: 5,
       },
       emphasis: {
         disabled: false,
-        itemStyle: { areaColor: "#dcc9a4" },
+        itemStyle: { areaColor: "#d8bf8f" },
         label: { show: false },
       },
       select: { disabled: true },
@@ -72,21 +76,26 @@ function buildOption(points: MapPoint[]) {
           id: p.id,
           title: p.title,
         })),
-        symbolSize: 10,
+        symbolSize: 11,
         showEffectOn: "render",
-        rippleEffect: { scale: 3.2, brushType: "stroke" },
+        rippleEffect: { scale: 3.6, brushType: "stroke", period: 3.2 },
         itemStyle: {
           color: "#c0452f",
-          shadowBlur: 6,
-          shadowColor: "rgba(192,69,47,0.45)",
+          borderColor: "#fff7e6",
+          borderWidth: 1.2,
+          shadowBlur: 10,
+          shadowColor: "rgba(192,69,47,0.55)",
         },
         label: {
           show: true,
           position: "right",
           formatter: "{b}",
           fontSize: 11,
-          color: "#6b5b47",
+          color: "#5f513f",
+          fontWeight: "bold" as const,
           fontFamily: "KaiTi, serif",
+          textShadowColor: "rgba(255,255,255,0.8)",
+          textShadowBlur: 4,
         },
         zlevel: 3,
       },
@@ -124,11 +133,20 @@ export default function WorldMap({ points, onPick, height = 430 }: Props) {
             router.push(`/posts/${params.data.id}`);
           } else if (
             params.componentType === "geo" &&
-            Array.isArray(params.value) &&
             onPickRef.current
           ) {
-            const [lng, lat] = params.value as number[];
-            onPickRef.current(lng, lat);
+            try {
+              const pixel = [
+                params.event?.offsetX ?? 0,
+                params.event?.offsetY ?? 0,
+              ];
+              const point = chart?.convertFromPixel({ geoIndex: 0 }, pixel);
+              if (point) {
+                onPickRef.current(point[0], point[1]);
+              }
+            } catch {
+              // 坐标转换失败时忽略，避免打断其他点击
+            }
           }
         });
       } catch (err) {
