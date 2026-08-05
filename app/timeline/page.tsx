@@ -51,15 +51,15 @@ export default async function TimelinePage() {
 
       <div className="note-card relative p-6 text-center">
         <div className="pin" aria-hidden />
-        <h1 className="text-2xl font-bold">我的旅行时间线</h1>
+        <h1 className="font-display text-2xl font-bold">友达手账本</h1>
         <p className="mt-2 text-sm text-ink-soft">
-          一年一年往回翻，每一段旅程都有位置
+          和朋友们一起，把日子一页页写下来
         </p>
       </div>
 
       {years.length === 0 ? (
         <div className="note-card px-6 py-12 text-center text-ink-soft">
-          时间线还是空的，写下第一篇日记后这里就会亮起来。
+          时间线还是空的，写下第一篇手账后这里就会亮起来。
         </div>
       ) : (
         <div className="relative space-y-10 pl-8 sm:pl-12">

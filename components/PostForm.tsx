@@ -93,7 +93,7 @@ export default function PostForm({ userId, post }: Props) {
     e.preventDefault();
     setError("");
     if (!content.trim()) {
-      setError("请写下日记内容");
+      setError("请写下手账内容");
       return;
     }
     if ((lat === null) !== (lng === null)) {
@@ -135,7 +135,7 @@ export default function PostForm({ userId, post }: Props) {
       <div className="note-card relative p-6 sm:p-8">
         <div className="tape" aria-hidden />
         <h1 className="mb-5 text-2xl font-bold">
-          {post ? "✎ 编辑这篇日记" : "✎ 写一篇日记"}
+          {post ? "✎ 编辑这篇手账" : "✎ 写一篇手账"}
         </h1>
 
         <div className="space-y-4">
@@ -248,7 +248,7 @@ export default function PostForm({ userId, post }: Props) {
           className="field min-h-[220px] resize-y leading-[2]"
           value={content}
           onChange={(e) => setContent(e.target.value)}
-          placeholder={"写下旅途中的故事…\n\n可以分段，按下回车换行。尽量用文字讲出画面。"}
+          placeholder={"写下今天的小事…\n\n可以分段，按下回车换行。尽量用文字讲出画面。"}
           maxLength={20000}
         />
       </div>
@@ -342,7 +342,7 @@ export default function PostForm({ userId, post }: Props) {
 
       <div className="flex items-center gap-3">
         <button type="submit" disabled={busy} className="btn-primary">
-          {busy ? "保存中…" : post ? "保存修改" : "发布日记"}
+          {busy ? "保存中…" : post ? "保存修改" : "发布手账"}
         </button>
         <button
           type="button"

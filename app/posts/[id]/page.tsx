@@ -107,7 +107,7 @@ export default async function PostPage({
           </>
         ) : null}
         <Link href="/" className="btn-ghost">
-          ← 回到足迹地图
+          ← 回到首页
         </Link>
       </div>
 

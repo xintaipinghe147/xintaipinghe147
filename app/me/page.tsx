@@ -17,8 +17,8 @@ export default async function MePage() {
     user.role === "admin"
       ? "站长"
       : user.role === "member"
-        ? "已批准 · 可以发布日记"
-        : "待批准 · 暂时不能发布日记";
+        ? "已批准 · 可以写手账"
+        : "待批准 · 暂时不能写手账";
   const totalLikes = posts.reduce((sum, p) => sum + p.like_count, 0);
   const spotCount = new Set(
     posts
@@ -54,7 +54,7 @@ export default async function MePage() {
             <span
               className={`rounded-full px-3 py-1 text-xs ${
                 user.role === "pending"
-                  ? "bg-amber-100 text-amber-700"
+                  ? "bg-paper-deep/80 text-ink-soft"
                   : "bg-paper-deep/80 text-ink"
               }`}
             >
@@ -62,14 +62,14 @@ export default async function MePage() {
             </span>
             {user.role === "member" || user.role === "admin" ? (
               <Link href="/new" className="btn-primary py-1.5! text-sm">
-                写一篇日记
+                写一篇手账
               </Link>
             ) : null}
           </div>
         </div>
         <div className="mt-4 flex flex-wrap gap-3 text-sm">
           <span className="rounded-lg bg-paper-deep/60 px-3 py-1.5">
-            ✍ {posts.length} 篇日记
+            ✍ {posts.length} 篇手账
           </span>
           <span className="rounded-lg bg-paper-deep/60 px-3 py-1.5">
             ❤ 收到 {totalLikes} 个喜欢
@@ -91,12 +91,12 @@ export default async function MePage() {
       />
 
       <section className="space-y-5">
-        <h2 className="text-xl font-bold">我的日记（{posts.length}）</h2>
+        <h2 className="font-display text-xl font-bold">我的手账（{posts.length}）</h2>
         {posts.length === 0 ? (
           <div className="note-card px-6 py-10 text-center text-ink-soft">
             {user.role === "pending"
-              ? "等站长批准后，你的第一段旅程就可以写下来了。"
-              : "还没有日记，去写第一篇吧。"}
+              ? "等站长批准后，就可以和大家一起写手账了。"
+              : "还没有手账，去写第一篇吧。"}
           </div>
         ) : (
           <div className="grid gap-6 md:grid-cols-2">

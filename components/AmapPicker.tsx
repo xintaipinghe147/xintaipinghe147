@@ -181,11 +181,11 @@ export default function AmapPicker({ onPick, height = 300, center = null }: Prop
       hit.boundaries.forEach((b: any) => {
               const poly = new window.AMap.Polygon({
                 path: b,
-                strokeColor: "#ffffff",
+                strokeColor: "#f09db2",
                 strokeWeight: 2,
-                strokeOpacity: 0.9,
-                fillColor: "#ffffff",
-                fillOpacity: 0.04,
+                strokeOpacity: 0.85,
+                fillColor: "#f09db2",
+                fillOpacity: 0.08,
               });
         poly.setMap(map);
         districtPolysRef.current.push(poly);

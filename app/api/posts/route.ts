@@ -45,7 +45,7 @@ export async function POST(request: Request) {
     : [];
 
   if (!content) {
-    return NextResponse.json({ error: "日记正文不能为空" }, { status: 400 });
+    return NextResponse.json({ error: "手账正文不能为空" }, { status: 400 });
   }
   if (
     (lat === null) !== (lng === null) ||

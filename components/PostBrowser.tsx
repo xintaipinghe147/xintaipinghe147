@@ -68,8 +68,8 @@ export default function PostBrowser({ posts }: { posts: Post[] }) {
       {filtered.length === 0 ? (
         <div className="note-card px-6 py-12 text-center text-ink-soft">
           {query.trim()
-            ? "没有找到相关的日记，换个词试试？"
-            : "还没有日记。等第一段旅程被写下来，这里就会亮起来。"}
+            ? "没有找到相关的手账，换个词试试？"
+            : "还没有手账。和朋友一起写下第一篇吧！"}
         </div>
       ) : (
         <div className="grid gap-6 md:grid-cols-2">

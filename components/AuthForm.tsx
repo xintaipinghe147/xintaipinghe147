@@ -64,13 +64,13 @@ export default function AuthForm({ mode }: { mode: Mode }) {
   return (
     <div className="note-card relative mx-auto max-w-md p-8">
       <div className="tape" aria-hidden />
-      <div className="stamp">{isLogin ? "欢迎回来" : "加入旅程"}</div>
-      <h1 className="mt-5 text-2xl font-bold">
-        {isLogin ? "登录旅行手账" : "注册旅行手账"}
+      <div className="stamp">{isLogin ? "欢迎回来" : "一起写"}</div>
+      <h1 className="font-display mt-5 text-2xl font-bold">
+        {isLogin ? "登录友达手账" : "加入友达手账"}
       </h1>
       {isLogin ? null : (
         <p className="mt-2 text-sm leading-relaxed text-ink-soft">
-          注册后可以点赞、留言；经过站长批准后，还能发布自己的日记。
+          注册后可以一起写手账、打卡、留言；经过站长批准后即可发布。
         </p>
       )}
 

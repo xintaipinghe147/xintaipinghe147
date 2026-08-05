@@ -57,13 +57,13 @@ function buildOption(points: MapPoint[]) {
       zoom: 1.12,
       scaleLimit: { min: 1, max: 20 },
       itemStyle: {
-        areaColor: "#1d2026",
-        borderColor: "rgba(255,255,255,0.16)",
+        areaColor: "#fdf8f1",
+        borderColor: "#e7dacb",
         borderWidth: 1,
       },
       emphasis: {
         disabled: false,
-        itemStyle: { areaColor: "#2a2e37" },
+        itemStyle: { areaColor: "#f6ede2" },
         label: {
           show: false,
           fontSize: 11,
@@ -85,11 +85,11 @@ function buildOption(points: MapPoint[]) {
         showEffectOn: "render",
         rippleEffect: { scale: 2.6, brushType: "stroke", period: 3.6 },
         itemStyle: {
-          color: "#ffffff",
+          color: "#f09db2",
           borderColor: "#ffffff",
           borderWidth: 1.5,
           shadowBlur: 8,
-          shadowColor: "rgba(255,255,255,0.55)",
+          shadowColor: "rgba(240,157,178,0.55)",
         },
         label: {
           show: false,
