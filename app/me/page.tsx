@@ -69,13 +69,13 @@ export default async function MePage() {
         </div>
         <div className="mt-4 flex flex-wrap gap-3 text-sm">
           <span className="rounded-lg bg-paper-deep/60 px-3 py-1.5">
-            {posts.length} 篇手账
+            ✍ {posts.length} 篇手账
           </span>
           <span className="rounded-lg bg-paper-deep/60 px-3 py-1.5">
-            收到 {totalLikes} 个喜欢
+            ❤ 收到 {totalLikes} 个喜欢
           </span>
           <span className="rounded-lg bg-paper-deep/60 px-3 py-1.5">
-            到过 {spotCount} 个地方
+            📍 到过 {spotCount} 个地方
           </span>
           <span className="ml-auto self-center text-xs text-ink-soft">
             加入于 {formatDateTime(user.created_at)}

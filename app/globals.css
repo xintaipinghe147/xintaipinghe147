@@ -16,32 +16,29 @@
   --color-glass: rgba(255, 255, 255, 0.66);
   --color-field: rgba(255, 255, 255, 0.86);
   --color-map-bg: #fbf7f1;
-  --bg-page: #fbf7f1;
-  --bg-glow-a: rgba(240, 157, 178, 0.16);
-  --bg-glow-b: rgba(159, 211, 235, 0.16);
-  --bg-glow-c: rgba(190, 226, 201, 0.15);
   --font-journal: "Nunito", "PingFang SC", "Microsoft YaHei",
     -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-display: "ZCOOL KuaiLe", "Nunito", "PingFang SC",
     "Microsoft YaHei", sans-serif;
+  --font-serif: "Noto Serif SC", "Songti SC", "SimSun", serif;
 }
 
 body {
-  background-color: var(--bg-page);
+  background-color: #fbf7f1;
   background-image:
     radial-gradient(
       1000px 620px at 8% -6%,
-      var(--bg-glow-a),
+      rgba(240, 157, 178, 0.16),
       transparent 60%
     ),
     radial-gradient(
       900px 540px at 96% 8%,
-      var(--bg-glow-b),
+      rgba(159, 211, 235, 0.16),
       transparent 55%
     ),
     radial-gradient(
       820px 600px at 50% 114%,
-      var(--bg-glow-c),
+      rgba(190, 226, 201, 0.15),
       transparent 60%
     ),
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.045'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
@@ -100,48 +97,15 @@ html[data-theme="sakura"] {
 }
 
 html[data-theme="night"] {
-  --color-paper: #17141d;
-  --color-paper-deep: #211c2b;
-  --color-card: rgba(255, 255, 255, 0.05);
-  --color-ink: #f2eef7;
-  --color-ink-soft: rgba(242, 238, 247, 0.62);
-  --color-accent: #d9a8c2;
-  --color-accent-soft: rgba(217, 168, 194, 0.18);
-  --color-accent-ink: #2b1c28;
-  --color-stamp: #d9a8c2;
-  --color-line: rgba(255, 255, 255, 0.12);
-  --color-line-strong: rgba(255, 255, 255, 0.24);
-  --color-glass: rgba(255, 255, 255, 0.07);
-  --color-field: rgba(255, 255, 255, 0.08);
-  --color-map-bg: #1a1720;
-  --bg-page: #14121a;
-  --bg-glow-a: rgba(217, 168, 194, 0.1);
-  --bg-glow-b: rgba(160, 190, 230, 0.08);
-  --bg-glow-c: rgba(170, 200, 185, 0.08);
-}
-
-/* 系统深色模式：未手动选择主题时自动跟随 */
-@media (prefers-color-scheme: dark) {
-  html:not([data-theme]) {
-    --color-paper: #17141d;
-    --color-paper-deep: #211c2b;
-    --color-card: rgba(255, 255, 255, 0.05);
-    --color-ink: #f2eef7;
-    --color-ink-soft: rgba(242, 238, 247, 0.62);
-    --color-accent: #d9a8c2;
-    --color-accent-soft: rgba(217, 168, 194, 0.18);
-    --color-accent-ink: #2b1c28;
-    --color-stamp: #d9a8c2;
-    --color-line: rgba(255, 255, 255, 0.12);
-    --color-line-strong: rgba(255, 255, 255, 0.24);
-    --color-glass: rgba(255, 255, 255, 0.07);
-    --color-field: rgba(255, 255, 255, 0.08);
-    --color-map-bg: #1a1720;
-    --bg-page: #14121a;
-    --bg-glow-a: rgba(217, 168, 194, 0.1);
-    --bg-glow-b: rgba(160, 190, 230, 0.08);
-    --bg-glow-c: rgba(170, 200, 185, 0.08);
-  }
+  --color-paper: #f6f2fb;
+  --color-paper-deep: #eae2f6;
+  --color-ink: #5d566b;
+  --color-ink-soft: #978fa8;
+  --color-accent: #b8a2dd;
+  --color-accent-soft: #e7ddf5;
+  --color-accent-ink: #5d4a86;
+  --color-stamp: #b8a2dd;
+  --color-map-bg: #f6f2fb;
 }
 
 /* 卡片：圆角便签 + 轻薄纸张质感 + 柔和光影 */
@@ -289,22 +253,4 @@ html[data-theme="night"] {
 
 ::selection {
   background: rgba(240, 157, 178, 0.35);
-}
-
-/* 轻量入场动效：仅 transform/opacity，尊重系统减弱动效设置 */
-@keyframes rise-in {
-  from {
-    opacity: 0;
-    transform: translateY(14px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .hero-enter {
-    animation: rise-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
-  }
 }
