@@ -25,6 +25,7 @@ export default function AmapPicker({ onPick, height = 300, center = null }: Prop
   const [searching, setSearching] = useState(false);
   const [pickedName, setPickedName] = useState("");
   const [candidates, setCandidates] = useState<any[]>([]);
+  const [loadError, setLoadError] = useState("");
   onPickRef.current = onPick;
 
   useEffect(() => {
@@ -48,7 +49,6 @@ export default function AmapPicker({ onPick, height = 300, center = null }: Prop
         zoom: 11,
         center: center ?? [116.397428, 39.90923],
         viewMode: "2D",
-        mapStyle: "amap://styles/whitesmoke",
       });
       if (center) {
         placeMarker(center[0], center[1]);
@@ -66,11 +66,23 @@ export default function AmapPicker({ onPick, height = 300, center = null }: Prop
     if (window.AMap) {
       initMap();
     } else {
+      const timer = window.setTimeout(() => {
+        if (!window.AMap) {
+          setLoadError("高德地图加载失败，请检查 Key 是否配置正确");
+        }
+      }, 8000);
       const script = document.createElement("script");
       script.src = `https://webapi.amap.com/maps?v=2.0&key=${key}&plugin=AMap.PlaceSearch,AMap.Geocoder`;
       script.async = true;
-      script.onload = () => initMap();
-      script.onerror = () => console.error("高德地图脚本加载失败");
+      script.onload = () => {
+        window.clearTimeout(timer);
+        if (window.AMap) initMap();
+        else setLoadError("高德地图加载失败，请检查 Key 是否配置正确");
+      };
+      script.onerror = () => {
+        window.clearTimeout(timer);
+        setLoadError("高德地图脚本加载失败，请检查网络或 Key 配置");
+      };
       document.head.appendChild(script);
     }
 
@@ -133,14 +145,15 @@ export default function AmapPicker({ onPick, height = 300, center = null }: Prop
     setPickedName(name);
   }
 
-  if (!key) {
+  if (!key || loadError) {
     return (
       <div>
         <div className="mb-2 overflow-hidden rounded-lg border border-[rgba(150,128,92,0.35)] bg-[#fdfaf0]">
           <WorldMap points={[]} onPick={(lng, lat) => onPick(lng, lat)} height={height} />
         </div>
         <p className="mt-1 text-xs text-ink-soft">
-          当前使用简化版世界地图。配置高德地图密钥后，可搜索并精确到小区、街道。
+          {loadError ??
+            "当前使用简化版世界地图。配置高德地图密钥后，可搜索并精确到小区、街道。"}
         </p>
       </div>
     );

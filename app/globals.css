@@ -15,14 +15,75 @@
 
 body {
   background-color: var(--color-paper);
-  background-image: repeating-linear-gradient(
-    transparent 0px,
-    transparent 31px,
-    rgba(168, 147, 110, 0.16) 31px,
-    rgba(168, 147, 110, 0.16) 32px
-  );
+  background-image:
+    radial-gradient(
+      1100px 520px at 8% -8%,
+      rgba(228, 183, 168, 0.2),
+      transparent 60%
+    ),
+    radial-gradient(
+      900px 480px at 105% 15%,
+      rgba(238, 205, 110, 0.16),
+      transparent 55%
+    ),
+    repeating-linear-gradient(
+      transparent 0px,
+      transparent 31px,
+      var(--paper-lines, rgba(168, 147, 110, 0.15)) 31px,
+      var(--paper-lines, rgba(168, 147, 110, 0.15)) 32px
+    );
+  background-attachment: fixed;
   color: var(--color-ink);
   font-family: var(--font-journal);
+}
+
+/* 背景主题：可切换，选择会保存在本机 */
+html[data-theme="warm"] {
+  --color-paper: #fdf3d8;
+  --color-paper-deep: #f3e3b8;
+  --color-card: #fffdf3;
+  --color-ink: #5b4a33;
+  --color-ink-soft: #8a7a5f;
+  --color-accent: #c07a2d;
+  --color-accent-soft: #eacba0;
+  --color-stamp: #b55a2e;
+  --paper-lines: rgba(192, 122, 45, 0.14);
+}
+
+html[data-theme="mist"] {
+  --color-paper: #eef3ee;
+  --color-paper-deep: #dce8df;
+  --color-card: #fbfdf9;
+  --color-ink: #3f5547;
+  --color-ink-soft: #6f8577;
+  --color-accent: #3f7d5c;
+  --color-accent-soft: #b9d6c5;
+  --color-stamp: #2f6b4d;
+  --paper-lines: rgba(63, 125, 92, 0.12);
+}
+
+html[data-theme="sakura"] {
+  --color-paper: #fdf0f0;
+  --color-paper-deep: #f3dcdc;
+  --color-card: #fffafa;
+  --color-ink: #5f4141;
+  --color-ink-soft: #8d6b6b;
+  --color-accent: #c2708a;
+  --color-accent-soft: #eecdd6;
+  --color-stamp: #b35672;
+  --paper-lines: rgba(194, 112, 138, 0.12);
+}
+
+html[data-theme="night"] {
+  --color-paper: #20242e;
+  --color-paper-deep: #2a303d;
+  --color-card: #262c38;
+  --color-ink: #e6e0d4;
+  --color-ink-soft: #a6a295;
+  --color-accent: #e08b6f;
+  --color-accent-soft: #6d4438;
+  --color-stamp: #e08b6f;
+  --paper-lines: rgba(255, 255, 255, 0.05);
 }
 
 .note-card {

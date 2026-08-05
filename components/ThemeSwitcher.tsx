@@ -1,0 +1,80 @@
+"use client";
+
+import { useEffect, useState } from "react";
+
+const THEMES = [
+  { id: "paper", label: "纸张", color: "#f7f0de", color2: "#efe4cb" },
+  { id: "warm", label: "暖阳", color: "#fdf3d8", color2: "#f3e3b8" },
+  { id: "mist", label: "晨雾", color: "#eef3ee", color2: "#dce8df" },
+  { id: "sakura", label: "樱花", color: "#fdf0f0", color2: "#f3dcdc" },
+  { id: "night", label: "夜空", color: "#20242e", color2: "#2a303d" },
+] as const;
+
+export default function ThemeSwitcher() {
+  const [open, setOpen] = useState(false);
+  const [theme, setTheme] = useState<string>("paper");
+
+  useEffect(() => {
+    const saved = localStorage.getItem("journal-theme");
+    if (saved) {
+      setTheme(saved);
+      document.documentElement.dataset.theme = saved;
+    }
+  }, []);
+
+  function apply(id: string) {
+    setTheme(id);
+    localStorage.setItem("journal-theme", id);
+    document.documentElement.dataset.theme = id;
+  }
+
+  const current = THEMES.find((t) => t.id === theme);
+
+  return (
+    <div className="fixed bottom-5 right-5 z-40">
+      {open ? (
+        <div className="note-card absolute bottom-14 right-0 w-60 p-4">
+          <p className="mb-2 text-sm font-bold">背景主题</p>
+          <div className="grid grid-cols-5 gap-2">
+            {THEMES.map((t) => (
+              <button
+                key={t.id}
+                type="button"
+                onClick={() => apply(t.id)}
+                title={t.label}
+                aria-label={t.label}
+                className={`h-9 rounded-lg border-2 transition-transform hover:scale-105 ${
+                  theme === t.id
+                    ? "border-accent"
+                    : "border-[rgba(150,128,92,0.35)]"
+                }`}
+                style={{
+                  background: `linear-gradient(135deg, ${t.color} 50%, ${t.color2} 50%)`,
+                }}
+              />
+            ))}
+          </div>
+          <div className="mt-2 flex items-center justify-between text-xs text-ink-soft">
+            <span>{current?.label ?? "纸张"}</span>
+            <button
+              type="button"
+              onClick={() => setOpen(false)}
+              className="hover:text-accent"
+            >
+              收起
+            </button>
+          </div>
+        </div>
+      ) : null}
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="btn-ghost h-12 w-12 rounded-full text-xl"
+        title="切换背景主题"
+        aria-label="切换背景主题"
+      >
+        🎨
+      </button>
+    </div>
+  );
+}
