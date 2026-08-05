@@ -20,10 +20,10 @@ export default async function EditPostPage({
     return (
       <div className="note-card mx-auto max-w-md p-8 text-center">
         <div className="pin" aria-hidden />
-        <h1 className="text-xl font-bold">不能编辑这篇游记</h1>
+        <h1 className="text-xl font-bold">不能编辑这篇日记</h1>
         <p className="mt-3 text-ink-soft">只有作者本人或站长可以编辑。</p>
         <Link href={`/posts/${post.id}`} className="btn-ghost mt-5">
-          返回游记
+          返回日记
         </Link>
       </div>
     );

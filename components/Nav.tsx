@@ -26,7 +26,7 @@ export default async function Nav() {
             足迹地图
           </Link>
           <Link href="/#latest" className="nav-link hidden sm:inline">
-            最新游记
+            最新日记
           </Link>
           <Link href="/timeline" className="nav-link hidden sm:inline">
             时间线
@@ -35,7 +35,7 @@ export default async function Nav() {
             <>
               {user.role === "member" || user.role === "admin" ? (
                 <Link href="/new" className="nav-link">
-                  写游记
+                  写日记
                 </Link>
               ) : null}
               {user.role === "admin" ? (

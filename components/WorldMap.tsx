@@ -33,14 +33,14 @@ type Props = {
 
 function buildOption(points: MapPoint[]) {
   return {
-    backgroundColor: "#dbe7ef",
+    backgroundColor: "#eef2f6",
     tooltip: {
       trigger: "item" as const,
       confine: true,
-      backgroundColor: "rgba(76,65,53,0.95)",
+      backgroundColor: "rgba(30,32,38,0.92)",
       borderWidth: 0,
-      extraCssText: "border-radius:10px;box-shadow:0 4px 16px rgba(0,0,0,.25);",
-      textStyle: { color: "#fff", fontSize: 13, fontFamily: "KaiTi, serif" },
+      extraCssText: "border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.18);",
+      textStyle: { color: "#fff", fontSize: 13 },
       formatter: (params: any) => {
         if (params.seriesType === "effectScatter") {
           const d = params.data ?? {};
@@ -57,36 +57,19 @@ function buildOption(points: MapPoint[]) {
       zoom: 1.12,
       scaleLimit: { min: 1, max: 20 },
       itemStyle: {
-        areaColor: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-          { offset: 0, color: "#f3e7cc" },
-          { offset: 1, color: "#dcc79b" },
-        ]),
-        borderColor: "#9c8868",
+        areaColor: "#f7f9fb",
+        borderColor: "#c8d1da",
         borderWidth: 1,
-        shadowColor: "rgba(80,60,35,0.35)",
-        shadowBlur: 14,
-        shadowOffsetY: 6,
       },
       emphasis: {
         disabled: false,
-        itemStyle: { areaColor: "#d3b678" },
+        itemStyle: { areaColor: "#dfe8f1" },
         label: {
-          show: true,
-          color: "#6b5b47",
+          show: false,
           fontSize: 11,
-          fontWeight: "bold" as const,
-          fontFamily: "KaiTi, serif",
-          textShadowColor: "rgba(255,255,255,0.9)",
-          textShadowBlur: 4,
         },
       },
       select: { disabled: true },
-      regions: [
-        {
-          name: "Antarctica",
-          itemStyle: { areaColor: "#e9eef2" },
-        },
-      ],
     },
     series: [
       {
@@ -98,26 +81,18 @@ function buildOption(points: MapPoint[]) {
           id: p.id,
           title: p.title,
         })),
-        symbolSize: 12,
+        symbolSize: 10,
         showEffectOn: "render",
-        rippleEffect: { scale: 4, brushType: "stroke", period: 3 },
+        rippleEffect: { scale: 2.6, brushType: "stroke", period: 3.6 },
         itemStyle: {
-          color: "#b3402a",
-          borderColor: "#fff7e6",
+          color: "#ff3b30",
+          borderColor: "#ffffff",
           borderWidth: 1.5,
-          shadowBlur: 12,
-          shadowColor: "rgba(179,64,42,0.6)",
+          shadowBlur: 8,
+          shadowColor: "rgba(255,59,48,0.5)",
         },
         label: {
-          show: true,
-          position: "right",
-          formatter: "{b}",
-          fontSize: 11,
-          color: "#4c3d2f",
-          fontWeight: "bold" as const,
-          fontFamily: "KaiTi, serif",
-          textShadowColor: "rgba(255,255,255,0.8)",
-          textShadowBlur: 4,
+          show: false,
         },
         zlevel: 3,
       },

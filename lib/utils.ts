@@ -6,6 +6,23 @@ export function formatDate(iso: string): string {
   return `${shifted.getUTCFullYear()}年${shifted.getUTCMonth() + 1}月${shifted.getUTCDate()}日`;
 }
 
+export function formatDateShort(iso: string): string {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return iso;
+  const shifted = new Date(d.getTime() + 8 * 60 * 60 * 1000);
+  return `${shifted.getUTCFullYear()}.${String(shifted.getUTCMonth() + 1).padStart(
+    2,
+    "0"
+  )}.${String(shifted.getUTCDate()).padStart(2, "0")}`;
+}
+
+export function postDate(post: {
+  occurred_at: string | null;
+  created_at: string;
+}): string {
+  return post.occurred_at ?? post.created_at;
+}
+
 export function formatDateTime(iso: string): string {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return iso;

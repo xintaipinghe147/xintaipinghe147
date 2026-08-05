@@ -8,7 +8,7 @@ export default function DeletePostButton({ postId }: { postId: string }) {
   const [busy, setBusy] = useState(false);
 
   async function handle() {
-    if (!confirm("确定要删除这篇游记吗？删除后无法恢复。")) return;
+    if (!confirm("确定要删除这篇日记吗？删除后无法恢复。")) return;
     setBusy(true);
     try {
       const res = await fetch(`/api/posts/${postId}`, { method: "DELETE" });
@@ -30,7 +30,7 @@ export default function DeletePostButton({ postId }: { postId: string }) {
       disabled={busy}
       className="btn-ghost border-accent/50 text-sm text-accent"
     >
-      删除这篇游记
+      删除这篇日记
     </button>
   );
 }

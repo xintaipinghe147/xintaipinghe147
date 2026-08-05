@@ -3,7 +3,7 @@ import HomeMap from "@/components/HomeMap";
 import PostBrowser from "@/components/PostBrowser";
 import { getPublishedPosts } from "@/lib/data";
 import { getSessionUser } from "@/lib/auth";
-import { formatDate } from "@/lib/utils";
+import { formatDate, postDate } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
@@ -11,13 +11,16 @@ export default async function HomePage() {
   const [posts, user] = await Promise.all([getPublishedPosts(50), getSessionUser()]);
 
   const points = posts
-    .filter((p) => Number.isFinite(p.lat) && Number.isFinite(p.lng))
+    .filter(
+      (p): p is (typeof posts)[number] & { lat: number; lng: number } =>
+        p.lat !== null && p.lng !== null
+    )
     .map((p) => ({
       id: p.id,
       name: p.location_name,
       title: p.title,
       value: [p.lng, p.lat] as [number, number],
-      date: formatDate(p.created_at),
+      date: formatDate(postDate(p)),
       cover: p.image_urls[0],
       excerpt: p.content,
     }));
@@ -26,53 +29,59 @@ export default async function HomePage() {
 
   return (
     <div className="space-y-10">
-      <section className="note-card relative px-6 py-10 text-center sm:px-10">
-        <div className="pin" aria-hidden />
-        <div className="stamp">旅行手账</div>
-        <h1 className="mt-5 text-4xl font-bold tracking-wide sm:text-5xl">
+      <section className="py-10 text-center sm:py-14">
+        <p className="text-xs font-semibold uppercase tracking-[0.32em] text-accent">
+          我的旅行手账
+        </p>
+        <h1 className="mx-auto mt-5 max-w-3xl text-4xl font-bold tracking-tight sm:text-6xl">
           把走过的路，写成一册手账
         </h1>
-        <p className="mx-auto mt-4 max-w-xl text-[16px] leading-relaxed text-ink-soft">
-          点击地图上的足迹，翻开每一段旅程的故事。也可以注册账号，
-          留下你的评论，或者分享你自己的旅行日记。
+        <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-ink-soft">
+          写下今天的故事，点亮去过的每一个地方。
+          注册后，你也可以把每一天的经历写进这本手账。
         </p>
-        <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
           {canPost ? (
             <Link href="/new" className="btn-primary">
-              写一篇游记
+              写一篇日记
             </Link>
           ) : (
             <Link href="/signup" className="btn-primary">
-              注册，加入旅程
+              注册，开始记录
             </Link>
           )}
           <Link href="#latest" className="btn-ghost">
-            浏览最新游记
+            浏览最新动态
           </Link>
         </div>
       </section>
 
-      <section className="note-card p-4 sm:p-6">
-        <div className="mb-3 flex flex-wrap items-end justify-between gap-2">
-          <h2 className="flex items-center gap-2 text-xl font-bold">
-            <span aria-hidden>🗺</span> 世界足迹
+      <section id="latest" className="scroll-mt-20 space-y-6">
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
+            最新动态
+          </h2>
+          <Link href="/timeline" className="nav-link text-sm">
+            查看时间线 →
+          </Link>
+        </div>
+        <PostBrowser posts={posts} />
+      </section>
+
+      <section className="space-y-6">
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
+            世界足迹
           </h2>
           <p className="text-sm text-ink-soft">
             {points.length > 0
-              ? `已点亮 ${points.length} 个地方，点击红色标记查看游记`
-              : "足迹会随着游记慢慢点亮"}
+              ? `已点亮 ${points.length} 个地方，点击标记查看日记`
+              : "足迹会随着日记慢慢点亮"}
           </p>
         </div>
-        <div className="overflow-hidden rounded-lg border border-line bg-map-bg">
+        <div className="overflow-hidden rounded-2xl border border-line bg-map-bg shadow-sm">
           <HomeMap points={points} />
         </div>
-      </section>
-
-      <section id="latest" className="space-y-5">
-        <h2 className="flex items-center gap-2 text-xl font-bold">
-          <span aria-hidden>✎</span> 最新游记
-        </h2>
-        <PostBrowser posts={posts} />
       </section>
     </div>
   );

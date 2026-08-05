@@ -12,6 +12,13 @@ type Props = {
   post?: Post | null;
 };
 
+function todayStr() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(
+    d.getDate()
+  ).padStart(2, "0")}`;
+}
+
 export default function PostForm({ userId, post }: Props) {
   const router = useRouter();
   const supabase = createClient();
@@ -26,6 +33,7 @@ export default function PostForm({ userId, post }: Props) {
     post?.image_urls.map((u) => ({ url: u, name: u.split("/").pop() ?? u })) ?? []
   );
   const [tags, setTags] = useState<string[]>(post?.tags ?? []);
+  const [occurredAt, setOccurredAt] = useState(post?.occurred_at ?? todayStr());
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -84,12 +92,12 @@ export default function PostForm({ userId, post }: Props) {
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
-    if (!title.trim() || !locationName.trim() || !content.trim()) {
-      setError("请填写标题、地点名称和正文");
+    if (!content.trim()) {
+      setError("请写下日记内容");
       return;
     }
-    if (lat === null || lng === null) {
-      setError("请在地图上点选足迹位置，或手动填写坐标");
+    if ((lat === null) !== (lng === null)) {
+      setError("经纬度需要一起填写，或都不填");
       return;
     }
 
@@ -107,6 +115,7 @@ export default function PostForm({ userId, post }: Props) {
           video_url: videoUrl.trim() || null,
           image_urls: images.map((i) => i.url),
           tags,
+          occurred_at: occurredAt || null,
         }),
       });
       const data = await res.json();
@@ -126,12 +135,14 @@ export default function PostForm({ userId, post }: Props) {
       <div className="note-card relative p-6 sm:p-8">
         <div className="tape" aria-hidden />
         <h1 className="mb-5 text-2xl font-bold">
-          {post ? "✎ 编辑这篇游记" : "✎ 写一篇游记"}
+          {post ? "✎ 编辑这篇日记" : "✎ 写一篇日记"}
         </h1>
 
         <div className="space-y-4">
           <div>
-            <label className="mb-1 block text-sm text-ink-soft">标题</label>
+            <label className="mb-1 block text-sm text-ink-soft">
+              标题（可不填）
+            </label>
             <input
               className="field"
               value={title}
@@ -141,10 +152,26 @@ export default function PostForm({ userId, post }: Props) {
             />
           </div>
 
+          <div>
+            <label className="mb-1 block text-sm text-ink-soft">
+              这一天是哪天
+            </label>
+            <input
+              className="field"
+              type="date"
+              value={occurredAt}
+              onChange={(e) => setOccurredAt(e.target.value)}
+              max={todayStr()}
+            />
+            <p className="mt-1 text-xs text-ink-soft">
+              默认今天；想补记过去的日子，就改成那一天
+            </p>
+          </div>
+
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
               <label className="mb-1 block text-sm text-ink-soft">
-                地点名称
+                地点名称（可选）
               </label>
               <input
                 className="field"
@@ -156,7 +183,9 @@ export default function PostForm({ userId, post }: Props) {
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="mb-1 block text-sm text-ink-soft">纬度</label>
+                <label className="mb-1 block text-sm text-ink-soft">
+                  纬度（可选）
+                </label>
                 <input
                   className="field"
                   type="number"
@@ -169,7 +198,9 @@ export default function PostForm({ userId, post }: Props) {
                 />
               </div>
               <div>
-                <label className="mb-1 block text-sm text-ink-soft">经度</label>
+                <label className="mb-1 block text-sm text-ink-soft">
+                  经度（可选）
+                </label>
                 <input
                   className="field"
                   type="number"
@@ -186,12 +217,16 @@ export default function PostForm({ userId, post }: Props) {
 
           <div>
             <label className="mb-1 block text-sm text-ink-soft">
-              在地图上点选足迹位置
+              在地图上点选位置（可选，填了会出现在足迹地图上）
             </label>
             <AmapPicker
               onPick={pickLocation}
               height={300}
-              center={post ? [post.lng, post.lat] : null}
+              center={
+                post && post.lng !== null && post.lat !== null
+                  ? [post.lng, post.lat]
+                  : null
+              }
             />
             {lat !== null && lng !== null ? (
               <p className="mt-2 text-sm text-accent">
@@ -199,7 +234,7 @@ export default function PostForm({ userId, post }: Props) {
               </p>
             ) : (
               <p className="mt-2 text-sm text-ink-soft">
-                点击地图任意位置即可自动填入坐标
+                不填也可以发布，日记不会出现在足迹地图上
               </p>
             )}
           </div>
@@ -222,7 +257,7 @@ export default function PostForm({ userId, post }: Props) {
         <div className="pin" aria-hidden />
         <h2 className="mb-1 text-lg font-bold">标签（可选，最多 6 个）</h2>
         <p className="mb-3 text-xs text-ink-soft">
-          给这篇游记贴上主题，访客可以按标签筛选
+          给这篇日记贴上主题，访客可以按标签筛选
         </p>
         <div className="flex flex-wrap gap-2">
           {POST_TAGS.map((tag) => {
@@ -307,7 +342,7 @@ export default function PostForm({ userId, post }: Props) {
 
       <div className="flex items-center gap-3">
         <button type="submit" disabled={busy} className="btn-primary">
-          {busy ? "保存中…" : post ? "保存修改" : "发布游记"}
+          {busy ? "保存中…" : post ? "保存修改" : "发布日记"}
         </button>
         <button
           type="button"

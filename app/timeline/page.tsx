@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { getPublishedPosts } from "@/lib/data";
-import { formatDate } from "@/lib/utils";
+import { formatDate, postDate } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
@@ -9,7 +9,7 @@ export default async function TimelinePage() {
 
   const groups = new Map<number, typeof posts>();
   for (const post of posts) {
-    const year = new Date(post.created_at).getFullYear();
+    const year = new Date(postDate(post)).getFullYear();
     const list = groups.get(year) ?? [];
     list.push(post);
     groups.set(year, list);
@@ -28,7 +28,7 @@ export default async function TimelinePage() {
 
       {years.length === 0 ? (
         <div className="note-card px-6 py-12 text-center text-ink-soft">
-          时间线还是空的，写下第一篇游记后这里就会亮起来。
+          时间线还是空的，写下第一篇日记后这里就会亮起来。
         </div>
       ) : (
         <div className="relative space-y-10 pl-8 sm:pl-12">
@@ -61,7 +61,8 @@ export default async function TimelinePage() {
                     ) : null}
                     <div className="flex-1 py-4 pr-4">
                       <div className="mb-1 text-sm text-ink-soft">
-                        {formatDate(post.created_at)} · 📍 {post.location_name}
+                        {formatDate(postDate(post))}
+                        {post.location_name ? ` · 📍 ${post.location_name}` : ""}
                       </div>
                       <h3 className="font-bold group-hover:text-accent">
                         {post.title}

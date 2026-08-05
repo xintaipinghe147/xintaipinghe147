@@ -58,7 +58,7 @@ export default async function AdminPage() {
         <div className="tape" aria-hidden />
         <h1 className="text-2xl font-bold">⚙ 站长管理台</h1>
         <p className="mt-2 text-sm text-ink-soft">
-          这里可以批准新用户、管理游记和留言。
+          这里可以批准新用户、管理日记和留言。
         </p>
       </div>
 
@@ -122,7 +122,7 @@ export default async function AdminPage() {
       </section>
 
       <section className="note-card p-6">
-        <h2 className="mb-3 text-lg font-bold">游记管理（{posts.length}）</h2>
+        <h2 className="mb-3 text-lg font-bold">日记管理（{posts.length}）</h2>
         <ul className="divide-y divide-dashed divide-line">
           {posts.map((post) => (
             <li

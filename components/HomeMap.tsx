@@ -51,14 +51,14 @@ export default function HomeMap({ points }: { points: MapPoint[] }) {
                 href={`/posts/${selected.id}`}
                 className="btn-primary py-1.5! text-sm"
               >
-                翻开这篇游记 →
+                翻开这篇日记 →
               </Link>
             </div>
           </div>
         </div>
       ) : (
         <p className="pointer-events-none absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full bg-black/35 px-4 py-1.5 text-xs text-white">
-          点击地图上的红色足迹查看游记
+          点击地图上的红色足迹查看日记
         </p>
       )}
     </div>

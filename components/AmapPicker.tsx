@@ -20,6 +20,7 @@ export default function AmapPicker({ onPick, height = 300, center = null }: Prop
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
   const markerRef = useRef<any>(null);
+  const districtPolysRef = useRef<any[]>([]);
   const onPickRef = useRef(onPick);
   const [keyword, setKeyword] = useState("");
   const [searching, setSearching] = useState(false);
@@ -29,20 +30,26 @@ export default function AmapPicker({ onPick, height = 300, center = null }: Prop
   const [searchError, setSearchError] = useState("");
   onPickRef.current = onPick;
 
+  function placeMarker(lng: number, lat: number, name?: string) {
+    const map = mapRef.current;
+    if (!map || !window.AMap) return;
+    const position = [lng, lat];
+    if (markerRef.current) markerRef.current.setMap(null);
+    markerRef.current = new window.AMap.Marker({ position });
+    markerRef.current.setMap(map);
+    onPickRef.current(lng, lat, name);
+    setPickedName(name ?? "");
+  }
+
+  function clearDistrict() {
+    districtPolysRef.current.forEach((poly) => poly.setMap?.(null));
+    districtPolysRef.current = [];
+  }
+
   useEffect(() => {
     if (!key || !containerRef.current) return;
     let map: any = null;
     let cancelled = false;
-
-    function placeMarker(lng: number, lat: number, name?: string) {
-      if (!map || !window.AMap) return;
-      const position = [lng, lat];
-      if (markerRef.current) markerRef.current.setMap(null);
-      markerRef.current = new window.AMap.Marker({ position });
-      markerRef.current.setMap(map);
-      onPickRef.current(lng, lat, name);
-      setPickedName(name ?? "");
-    }
 
     function initMap() {
       if (cancelled || !containerRef.current || !window.AMap) return;
@@ -73,7 +80,7 @@ export default function AmapPicker({ onPick, height = 300, center = null }: Prop
         }
       }, 8000);
       const script = document.createElement("script");
-      script.src = `https://webapi.amap.com/maps?v=2.0&key=${key}&plugin=AMap.PlaceSearch,AMap.Geocoder`;
+      script.src = `https://webapi.amap.com/maps?v=2.0&key=${key}&plugin=AMap.PlaceSearch,AMap.Geocoder,AMap.DistrictSearch`;
       script.async = true;
       script.onload = () => {
         window.clearTimeout(timer);
@@ -101,39 +108,85 @@ export default function AmapPicker({ onPick, height = 300, center = null }: Prop
     try {
       setCandidates([]);
       setSearchError("");
-      const placeSearch = new window.AMap.PlaceSearch({
-        pageSize: 5,
-        pageIndex: 1,
+      clearDistrict();
+      // 1) 先按行政区查询：搜"山西"显示山西省、搜"太原"显示太原市
+      const district = new window.AMap.DistrictSearch({
+        level: "district",
+        subdistrict: 0,
+        extensions: "all",
       });
-      placeSearch.search(kw, (status: string, result: any) => {
-        const pois = result?.poiList?.pois ?? [];
-        if (status === "complete" && pois.length > 0) {
-          setCandidates(pois.slice(0, 5));
-          selectPlace(pois[0]);
-        } else {
-          setSearchError("没有搜到精确结果，试试更具体的地名（如“太原市小店区”）");
-          // POI 搜不到时，用地理编码试试（比如搜"山西"这类行政区名）
-          const geocoder = new window.AMap.Geocoder({});
-          geocoder.getLocation(kw, (geoStatus: string, geoResult: any) => {
-            const gc = geoResult?.geocodes?.[0];
-            if (geoStatus === "complete" && gc?.location) {
-              setSearchError("");
-              selectPlace({
-                name: gc.formattedAddress ?? kw,
-                location: gc.location,
-                adname: gc.adname ?? "",
+      district.search(kw, (dStatus: string, dResult: any) => {
+        const hit = (dResult?.districtList ?? []).find(
+          (d: any) =>
+            d.level === "province" ||
+            d.level === "city" ||
+            d.level === "district"
+        );
+        if (dStatus === "complete" && hit) {
+          setSearchError("");
+          if (Array.isArray(hit.boundaries) && hit.boundaries.length > 0) {
+            hit.boundaries.forEach((b: any) => {
+              const poly = new window.AMap.Polygon({
+                path: b,
+                strokeColor: "#ff3b30",
+                strokeWeight: 2,
+                strokeOpacity: 0.85,
+                fillColor: "#ff3b30",
+                fillOpacity: 0.06,
               });
-            } else {
-              setSearchError(
-                "搜索失败：请检查高德 Key 的搜索权限，或换个更具体的地名"
-              );
-            }
-          });
+              poly.setMap(mapRef.current);
+              districtPolysRef.current.push(poly);
+            });
+            mapRef.current.setFitView(districtPolysRef.current, false, [
+              70, 70, 70, 70,
+            ]);
+          } else if (hit.center) {
+            mapRef.current.setZoomAndCenter(10, hit.center);
+          }
+          if (hit.center) {
+            placeMarker(hit.center.lng, hit.center.lat, hit.name);
+          } else {
+            setPickedName(hit.name);
+          }
+          return;
         }
+        searchPlace(kw);
       });
     } finally {
       setSearching(false);
     }
+  }
+
+  function searchPlace(kw: string) {
+    const placeSearch = new window.AMap.PlaceSearch({
+      pageSize: 5,
+      pageIndex: 1,
+    });
+    placeSearch.search(kw, (status: string, result: any) => {
+      const pois = result?.poiList?.pois ?? [];
+      if (status === "complete" && pois.length > 0) {
+        setCandidates(pois.slice(0, 5));
+        selectPlace(pois[0]);
+      } else {
+        setSearchError("没有搜到精确结果，试试更具体的地名（如“太原市小店区”）");
+        const geocoder = new window.AMap.Geocoder({});
+        geocoder.getLocation(kw, (geoStatus: string, geoResult: any) => {
+          const gc = geoResult?.geocodes?.[0];
+          if (geoStatus === "complete" && gc?.location) {
+            setSearchError("");
+            selectPlace({
+              name: gc.formattedAddress ?? kw,
+              location: gc.location,
+              adname: gc.adname ?? "",
+            });
+          } else {
+            setSearchError(
+              "搜索失败：请检查高德 Key 的搜索权限，或换个更具体的地名"
+            );
+          }
+        });
+      }
+    });
   }
 
   function selectPlace(place: any) {

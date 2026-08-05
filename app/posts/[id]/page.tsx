@@ -7,7 +7,7 @@ import DeletePostButton from "@/components/DeletePostButton";
 import ImageGallery from "@/components/ImageGallery";
 import { getComments, getPost, isPostLiked } from "@/lib/data";
 import { getSessionUser } from "@/lib/auth";
-import { formatDate } from "@/lib/utils";
+import { formatDate, postDate } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
@@ -33,10 +33,12 @@ export default async function PostPage({
         <div className="tape" aria-hidden />
         <div className="p-6 sm:p-8">
           <div className="mb-3 flex flex-wrap items-center gap-2 text-sm text-ink-soft">
-            <span className="rounded-full bg-paper-deep/70 px-3 py-1">
-              📍 {post.location_name}
-            </span>
-            <span>{formatDate(post.created_at)}</span>
+            {post.location_name ? (
+              <span className="rounded-full bg-paper-deep/70 px-3 py-1">
+                📍 {post.location_name}
+              </span>
+            ) : null}
+            <span>{formatDate(postDate(post))}</span>
             <span aria-hidden>·</span>
             <span className="font-bold text-accent/80">
               {post.author_username}
@@ -45,9 +47,11 @@ export default async function PostPage({
           <h1 className="text-3xl font-bold leading-snug sm:text-4xl">
             {post.title}
           </h1>
-          <p className="mt-2 text-sm text-ink-soft">
-            坐标：{post.lat.toFixed(4)}° , {post.lng.toFixed(4)}°
-          </p>
+          {post.lat !== null && post.lng !== null ? (
+            <p className="mt-2 text-sm text-ink-soft">
+              坐标：{post.lat.toFixed(4)}° , {post.lng.toFixed(4)}°
+            </p>
+          ) : null}
         </div>
       </div>
 

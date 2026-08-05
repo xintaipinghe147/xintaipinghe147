@@ -20,7 +20,7 @@ export async function DELETE(
     .eq("id", id)
     .maybeSingle();
   if (!post) {
-    return NextResponse.json({ error: "游记不存在" }, { status: 404 });
+    return NextResponse.json({ error: "日记不存在" }, { status: 404 });
   }
   if (post.author_id !== user.id && user.role !== "admin") {
     return NextResponse.json({ error: "没有权限删除" }, { status: 403 });
@@ -53,7 +53,7 @@ export async function PATCH(
     .eq("id", id)
     .maybeSingle();
   if (!post) {
-    return NextResponse.json({ error: "游记不存在" }, { status: 404 });
+    return NextResponse.json({ error: "日记不存在" }, { status: 404 });
   }
   if (post.author_id !== user.id && user.role !== "admin") {
     return NextResponse.json({ error: "没有权限编辑" }, { status: 403 });
@@ -63,8 +63,16 @@ export async function PATCH(
   const title = String(body.title ?? "").trim().slice(0, 80);
   const location_name = String(body.location_name ?? "").trim().slice(0, 40);
   const content = String(body.content ?? "").trim().slice(0, 20000);
-  const lat = Number(body.lat);
-  const lng = Number(body.lng);
+  const lat = body.lat === null || body.lat === undefined || body.lat === ""
+    ? null
+    : Number(body.lat);
+  const lng = body.lng === null || body.lng === undefined || body.lng === ""
+    ? null
+    : Number(body.lng);
+  const occurred_at =
+    typeof body.occurred_at === "string" && /^\d{4}-\d{2}-\d{2}$/.test(body.occurred_at)
+      ? body.occurred_at
+      : null;
   const video_url =
     typeof body.video_url === "string" && body.video_url.trim()
       ? body.video_url.trim().slice(0, 300)
@@ -86,11 +94,15 @@ export async function PATCH(
         .map((t: string) => t.trim())
     : [];
 
-  if (!title || !location_name || !content) {
-    return NextResponse.json({ error: "标题、地点和正文不能为空" }, { status: 400 });
+  if (!content) {
+    return NextResponse.json({ error: "日记正文不能为空" }, { status: 400 });
   }
-  if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
-    return NextResponse.json({ error: "请填写有效的坐标" }, { status: 400 });
+  if (
+    (lat === null) !== (lng === null) ||
+    (lat !== null && !Number.isFinite(lat)) ||
+    (lng !== null && !Number.isFinite(lng))
+  ) {
+    return NextResponse.json({ error: "经纬度需要一起填写" }, { status: 400 });
   }
 
   const { data, error } = await supabase
@@ -104,6 +116,7 @@ export async function PATCH(
       image_urls,
       video_url,
       tags,
+      occurred_at,
       updated_at: new Date().toISOString(),
     })
     .eq("id", id)

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Post } from "@/lib/types";
-import { excerpt, formatDate } from "@/lib/utils";
+import { excerpt, formatDate, postDate } from "@/lib/utils";
 
 export default function PostCard({
   post,
@@ -21,7 +21,6 @@ export default function PostCard({
         featured ? "md:col-span-2" : ""
       }`}
     >
-      <div className="tape" aria-hidden />
       <div className={`flex ${featured ? "flex-col md:flex-row" : "flex-col sm:flex-row"}`}>
         {cover ? (
           <div
@@ -51,9 +50,11 @@ export default function PostCard({
         )}
         <div className={`flex-1 ${featured ? "p-6" : "p-5"}`}>
           <div className="mb-1 flex items-center gap-2 text-sm text-ink-soft">
-            <span>📍 {post.location_name}</span>
-            <span aria-hidden>·</span>
-            <span>{formatDate(post.created_at)}</span>
+            {post.location_name ? <span>📍 {post.location_name}</span> : null}
+            {post.location_name ? (
+              <span aria-hidden>·</span>
+            ) : null}
+            <span>{formatDate(postDate(post))}</span>
           </div>
           <h2
             className={`mb-2 font-bold leading-snug group-hover:text-accent ${

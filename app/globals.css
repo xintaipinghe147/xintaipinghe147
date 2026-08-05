@@ -14,28 +14,22 @@
   --color-glass: rgba(255, 255, 255, 0.5);
   --color-field: rgba(255, 255, 255, 0.75);
   --color-map-bg: #fdfaf0;
-  --font-journal: "Kaiti SC", "STKaiti", "KaiTi", "楷体", "Noto Serif SC",
-    "Songti SC", serif;
+  --font-journal: -apple-system, BlinkMacSystemFont, "SF Pro SC",
+    "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
 }
 
 body {
   background-color: var(--color-paper);
   background-image:
     radial-gradient(
-      1100px 520px at 8% -8%,
-      rgba(228, 183, 168, 0.2),
-      transparent 60%
+      1200px 640px at 70% -10%,
+      var(--color-hero-glow, rgba(255, 255, 255, 0.5)),
+      transparent 62%
     ),
     radial-gradient(
-      900px 480px at 105% 15%,
-      rgba(238, 205, 110, 0.16),
+      900px 520px at 0% 40%,
+      rgba(255, 255, 255, 0.28),
       transparent 55%
-    ),
-    repeating-linear-gradient(
-      transparent 0px,
-      transparent 31px,
-      var(--paper-lines, rgba(168, 147, 110, 0.15)) 31px,
-      var(--paper-lines, rgba(168, 147, 110, 0.15)) 32px
     );
   background-attachment: fixed;
   color: var(--color-ink);
@@ -115,9 +109,8 @@ html[data-theme="night"] {
   position: relative;
   background: var(--color-card);
   border: 1px solid var(--color-line);
-  border-radius: 10px;
-  box-shadow: 0 3px 10px rgba(90, 70, 40, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  border-radius: 16px;
+  box-shadow: 0 10px 34px rgba(50, 40, 25, 0.07);
 }
 
 .tape {

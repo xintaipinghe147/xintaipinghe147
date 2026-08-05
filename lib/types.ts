@@ -15,13 +15,14 @@ export type Post = {
   author_id: string;
   title: string;
   location_name: string;
-  lat: number;
-  lng: number;
+  lat: number | null;
+  lng: number | null;
   content: string;
   image_urls: string[];
   video_url: string | null;
   status: "published" | "pending";
   tags: string[];
+  occurred_at: string | null;
   created_at: string;
   updated_at: string;
   author_username: string;

@@ -70,7 +70,7 @@ export default function AuthForm({ mode }: { mode: Mode }) {
       </h1>
       {isLogin ? null : (
         <p className="mt-2 text-sm leading-relaxed text-ink-soft">
-          注册后可以点赞、留言；经过站长批准后，还能发布自己的游记。
+          注册后可以点赞、留言；经过站长批准后，还能发布自己的日记。
         </p>
       )}
 
