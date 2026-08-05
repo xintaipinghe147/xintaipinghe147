@@ -32,7 +32,7 @@ export default function RootLayout({
       </head>
       <body className="min-h-screen text-ink antialiased">
         <Nav />
-        <main className="mx-auto w-full max-w-6xl px-4 pb-20 pt-6">
+        <main className="mx-auto w-full max-w-5xl px-4 pb-20 pt-6">
           {children}
         </main>
         <ThemeSwitcher />

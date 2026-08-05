@@ -7,8 +7,7 @@ const THEMES = [
   { id: "warm", label: "蜜桃", color: "#fdf3ec", color2: "#f8e6d9" },
   { id: "mist", label: "薄荷", color: "#f1f8f3", color2: "#e1efe7" },
   { id: "sakura", label: "草莓", color: "#fdf2f4", color2: "#f8e0e5" },
-  { id: "lavender", label: "紫芋", color: "#f6f2fb", color2: "#eae2f6" },
-  { id: "night", label: "夜空", color: "#17141d", color2: "#211c2b" },
+  { id: "night", label: "紫芋", color: "#f6f2fb", color2: "#eae2f6" },
 ] as const;
 
 export default function ThemeSwitcher() {
@@ -36,7 +35,7 @@ export default function ThemeSwitcher() {
       {open ? (
         <div className="note-card absolute bottom-14 right-0 w-60 p-4">
           <p className="mb-2 text-sm font-bold">背景主题</p>
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-5 gap-2">
             {THEMES.map((t) => (
               <button
                 key={t.id}
